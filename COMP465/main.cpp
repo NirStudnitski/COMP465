@@ -160,7 +160,6 @@ void display(void) {
 		updateTitle();
 	}
 }
-//bla git test
 
 // Animate scene objects by updating their transformation matrices
 // timerDelay = 40, or 25 updates / second
