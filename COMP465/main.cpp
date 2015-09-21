@@ -37,6 +37,8 @@ char baseStr[50] = "Ruber {f, t, r} : ";
 char fpsStr[15], viewStr[15] = " front view";
 char titleStr[100];
 
+GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
+
 GLuint vao[nModels];  // VertexArrayObject
 GLuint buffer[nModels];
 GLuint shaderProgram;
@@ -61,12 +63,22 @@ double currentTime, lastTime, timeInterval;
 
 
 void init(void) {
+	shaderProgram = loadShaders(vertexShaderFile, fragmentShaderFile);
+	glUseProgram(shaderProgram);
 
-	for (int i = 0; i < 2; i++)
+	glGenVertexArrays(nModels, vao);
+	//glBindVertexArray(vao);
+
+	// Create and initialize a buffer object
+	// GLuint buffer;
+	glGenBuffers(nModels, buffer);
+	for (int i = 0; i < nModels; i++)
 	{
 
-		boundingRadius[i] = loadTriModel(modelFile[i], nVertices[i], vertex[i], diffuseColorMaterial, normal[i]);
-		if (boundingRadius == -1.0f) {
+		boundingRadius[i] = loadModelBuffer(modelFile[i], nVertices[i], vao[i], buffer[i], shaderProgram,
+			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
+
+		if (boundingRadius[i] == -1.0f) {
 			printf("loadTriModel error:  returned -1.0f \n");
 			exit(1);
 		}
@@ -74,36 +86,7 @@ void init(void) {
 		else
 			printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
 	}
-	shaderProgram = loadShaders(vertexShaderFile, fragmentShaderFile);
-	glUseProgram(shaderProgram);
-
-	glGenVertexArrays(nModels, vao); 
-	//glBindVertexArray(vao);
-
-	// Create and initialize a buffer object
-	// GLuint buffer;
-	glGenBuffers(nModels , buffer);
-	//glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) + sizeof(diffuseColorMaterial) + sizeof(normal), NULL, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertex), vertex);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex), sizeof(diffuseColorMaterial), diffuseColorMaterial);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex) + sizeof(diffuseColorMaterial), sizeof(normal), normal);
-
-
-	// set up vertex arrays (after shaders are loaded)
-	GLuint vPosition = glGetAttribLocation(shaderProgram, "vPosition");
-	glEnableVertexAttribArray(vPosition);
-	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-	GLuint vColor = glGetAttribLocation(shaderProgram, "vColor");
-	glEnableVertexAttribArray(vColor);
-	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(vertex)));
-
-	// Normal code is here for later use with lighting and shaders
-	GLuint vNormal = glGetAttribLocation(shaderProgram, "vNormal");
-	glEnableVertexAttribArray(vNormal);
-	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(vertex) + sizeof(diffuseColorMaterial)));
-
+	
 	MVP = glGetUniformLocation(shaderProgram, "ModelViewProjection");
 
 	// initially use a front view
@@ -117,7 +100,8 @@ void init(void) {
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 	// create shape
-	for (int i = 0; i < nShapes; i++) shape[i] = new ruber(i);
+	for (int i = 0; i < 2; i++) shape[i] = new ruber(i);
+	warB = new warbird();
 	
 
 	lastTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -146,6 +130,7 @@ void display(void) {
 		ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 		glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 		glBindVertexArray(vao[i]);
+		
 		glDrawArrays(GL_TRIANGLES, 0, nVertices[i]);
 	}
 	glutSwapBuffers();
@@ -165,7 +150,8 @@ void display(void) {
 // timerDelay = 40, or 25 updates / second
 void update(int i) {
 	glutTimerFunc(timerDelay, update, 1);
-	for (int i = 0; i < nShapes; i++) shape[i]->update();
+	 for (int i = 0; i < nShapes; i++) shape[i]->update();
+	warB->update();
 }
 
 // Quit or set the view
