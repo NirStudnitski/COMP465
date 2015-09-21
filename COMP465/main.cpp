@@ -8,19 +8,20 @@
 # include "Ruber.hpp"
 
 // Shapes
-const int nShapes = 3;
-const int nModels = 3;
+
+const int nModels = 6;
 const int nFacets = 17664;
 const int nFacetsWB = 4245;
+const int nFacetsMoon = 1104;
 
-ruber * shape[3];
+ruber * shape[nModels];
 
 // Model for shapes
-char * modelFile[nModels] = { "ruber3d.tri", "ruber3d.tri", "warbird.tri" };
+char * modelFile[nModels] = { "ruber3d.tri", "ruber3d.tri", "warbird.tri", "ruber3d.tri", "moon.tri", "moon.tri" };
 
 // read how many facets in tri file
 
-const GLuint nVertices[nModels] = {nFacets * 3, nFacets * 3, nFacetsWB*3};
+const GLuint nVertices[nModels] = {nFacets * 3, nFacets * 3, nFacetsWB*3, nFacets * 3, nFacetsMoon * 3, nFacetsMoon * 3 };
 
 // vectors for "model"
 glm::vec4 vertex[];
@@ -40,8 +41,8 @@ GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
 GLuint vao[nModels];  // VertexArrayObject
 GLuint buffer[nModels];
-GLuint shaderProgram[2];
-char * vertexShaderFile[2] = { "simpleVertex.glsl", "simpleVertex2.glsl" };
+GLuint shaderProgram[3];
+char * vertexShaderFile[3] = { "simpleVertex.glsl", "simpleVertex2.glsl" , "simpleVertex3.glsl" };
 char * fragmentShaderFile = "simpleFragment.glsl";
 GLuint MVP;  // Model View Projection matrix's handle
 glm::mat4 projectionMatrix;     // set in reshape()
@@ -62,7 +63,7 @@ double currentTime, lastTime, timeInterval;
 
 
 void init(void) {
-	for (int i = 0; i < 2;i++)  shaderProgram[i] = loadShaders(vertexShaderFile[i], fragmentShaderFile);
+	for (int i = 0; i < 3;i++)  shaderProgram[i] = loadShaders(vertexShaderFile[i], fragmentShaderFile);
 	glUseProgram(shaderProgram[0]);
 
 	glGenVertexArrays(nModels, vao);
@@ -73,8 +74,31 @@ void init(void) {
 	glGenBuffers(nModels, buffer);
 	for (int i = 0; i < nModels; i++)
 	{
+		int shaderID;
+		switch (i)
+		{
+			case 0: //shader for ruder
+				shaderID = 0;
+				break;
+			case 1: //shader for Unum
+				shaderID = 0;
+				break;
+			case 2: //shader for Warbird
+				shaderID = 1;
+				break;
+			case 3: //shader for Duo
+				shaderID = 0;
+				break;
+			case 4: //shader for Duo's moon
+				shaderID = 2;
+				break;
+			case 5: //shader for Duo's moon
+				shaderID = 2;
+				break;
 
-		boundingRadius[i] = loadModelBuffer(modelFile[i], nVertices[i], vao[i], buffer[i], shaderProgram[i/2],
+		}
+		
+		boundingRadius[i] = loadModelBuffer(modelFile[i], nVertices[i], vao[i], buffer[i], shaderProgram[shaderID],
 			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
 
 		if (boundingRadius[i] == -1.0f) {
@@ -99,7 +123,7 @@ void init(void) {
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 	// create shape
-	for (int i = 0; i < 3; i++) shape[i] = new ruber(i);
+	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i);
 	
 
 	lastTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -147,8 +171,9 @@ void display(void) {
 // Animate scene objects by updating their transformation matrices
 // timerDelay = 40, or 25 updates / second
 void update(int i) {
+	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
-	 for (int i = 0; i < nShapes; i++) shape[i]->update();
+	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime);
 	//warB->update();
 }
 
@@ -179,7 +204,7 @@ void keyboard(unsigned char key, int x, int y) {
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(800, 600);
+	glutInitWindowSize(1200, 600);
 	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutCreateWindow("465 manyCubes Example {f, t, r} : front view");

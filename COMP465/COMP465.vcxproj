@@ -126,13 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ruber.hpp" />
-    <ClInclude Include="Unum.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\Desktop\warbird.tri" />
     <None Include="simpleFragment.glsl" />
     <None Include="simpleVertex.glsl" />
     <None Include="simpleVertex2.glsl" />
+    <None Include="simpleVertex3.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

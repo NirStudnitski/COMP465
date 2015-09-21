@@ -23,9 +23,6 @@
     <ClInclude Include="Ruber.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Unum.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleFragment.glsl">
@@ -34,10 +31,10 @@
     <None Include="simpleVertex.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="..\..\..\..\..\Desktop\warbird.tri">
+    <None Include="simpleVertex2.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="simpleVertex2.glsl">
+    <None Include="simpleVertex3.glsl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
