@@ -21,22 +21,34 @@ public:
 	ruber(int number) {
 		id = number;  // for debugging
 		int random = rand();   // random num 0..MAXINT
-		if (number==0) scaleMatrix = glm::scale(glm::mat4(), glm::vec3(200, 200, 200)); 
-		else scaleMatrix = glm::scale(glm::mat4(), glm::vec3(50, 50, 50));
+		
 		rotationMatrix = glm::mat4();  // no initial orientation
-									   //set cube's  rotation axis and rotation radians
-		if (number==0) rotationAxis = glm::vec3(0, 1, 0);
-		else  rotationAxis = glm::vec3(0, 1.0f, 0);
-		// rotate between 0.1 and 2.0 degrees
-		if (number==0) radians = glm::radians(-200.0f);
-		else  radians = glm::radians(40.0f);
-		// random initial placement +/- 500 from origin in X, Y, Z
-		if (number == 1)
+		
+		switch (number)
 		{
+		case 0: //ruber
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(200, 200, 200));
+			rotationAxis = glm::vec3(0, 1, 0);
+			radians = glm::radians(-200.0f);
+			break;
+
+		case 1: //unum
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(50, 50, 50));
+			rotationAxis = glm::vec3(0, 1, 0);
+			radians = glm::radians(40.0f);
 			translationMatrix = glm::translate(glm::mat4(),
 				glm::vec3(800, 0.0f, 0.0f));
+			break;
+
+		case 2: //warbird
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(50, 50, -50));
+			rotationAxis = glm::vec3(0, 1, 0);
+			radians = glm::radians(0.0f);
+			translationMatrix = glm::translate(glm::mat4(),
+				glm::vec3(0, -300.0f, 1000.0f));
+			break;
+
 		}
-		
 		
 		
 			

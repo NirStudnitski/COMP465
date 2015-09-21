@@ -26,9 +26,6 @@
     <ClInclude Include="Unum.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="warbird.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleFragment.glsl">
@@ -38,6 +35,9 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="..\..\..\..\..\Desktop\warbird.tri">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="simpleVertex2.glsl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

@@ -6,22 +6,21 @@
 #include <fstream>
 
 # include "Ruber.hpp"
-# include "warbird.hpp"
 
 // Shapes
 const int nShapes = 3;
-const int nModels = 2;
+const int nModels = 3;
 const int nFacets = 17664;
 const int nFacetsWB = 4245;
 
-ruber * shape[2];
-warbird * warB;
+ruber * shape[3];
+
 // Model for shapes
-char * modelFile[nModels] = { "ruber3d.tri", "warbird.tri" };
+char * modelFile[nModels] = { "ruber3d.tri", "ruber3d.tri", "warbird.tri" };
 
 // read how many facets in tri file
 
-const GLuint nVertices[nModels] = {nFacets * 3, nFacetsWB*3};
+const GLuint nVertices[nModels] = {nFacets * 3, nFacets * 3, nFacetsWB*3};
 
 // vectors for "model"
 glm::vec4 vertex[];
@@ -41,8 +40,8 @@ GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
 GLuint vao[nModels];  // VertexArrayObject
 GLuint buffer[nModels];
-GLuint shaderProgram;
-char * vertexShaderFile = "simpleVertex.glsl";
+GLuint shaderProgram[2];
+char * vertexShaderFile[2] = { "simpleVertex.glsl", "simpleVertex2.glsl" };
 char * fragmentShaderFile = "simpleFragment.glsl";
 GLuint MVP;  // Model View Projection matrix's handle
 glm::mat4 projectionMatrix;     // set in reshape()
@@ -63,8 +62,8 @@ double currentTime, lastTime, timeInterval;
 
 
 void init(void) {
-	shaderProgram = loadShaders(vertexShaderFile, fragmentShaderFile);
-	glUseProgram(shaderProgram);
+	for (int i = 0; i < 2;i++)  shaderProgram[i] = loadShaders(vertexShaderFile[i], fragmentShaderFile);
+	glUseProgram(shaderProgram[0]);
 
 	glGenVertexArrays(nModels, vao);
 	//glBindVertexArray(vao);
@@ -75,7 +74,7 @@ void init(void) {
 	for (int i = 0; i < nModels; i++)
 	{
 
-		boundingRadius[i] = loadModelBuffer(modelFile[i], nVertices[i], vao[i], buffer[i], shaderProgram,
+		boundingRadius[i] = loadModelBuffer(modelFile[i], nVertices[i], vao[i], buffer[i], shaderProgram[i/2],
 			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
 
 		if (boundingRadius[i] == -1.0f) {
@@ -87,7 +86,7 @@ void init(void) {
 			printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
 	}
 	
-	MVP = glGetUniformLocation(shaderProgram, "ModelViewProjection");
+	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
 
 	// initially use a front view
 	eye = glm::vec3(0.0f, 0.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
@@ -100,8 +99,7 @@ void init(void) {
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 	// create shape
-	for (int i = 0; i < 2; i++) shape[i] = new ruber(i);
-	warB = new warbird();
+	for (int i = 0; i < 3; i++) shape[i] = new ruber(i);
 	
 
 	lastTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -151,7 +149,7 @@ void display(void) {
 void update(int i) {
 	glutTimerFunc(timerDelay, update, 1);
 	 for (int i = 0; i < nShapes; i++) shape[i]->update();
-	warB->update();
+	//warB->update();
 }
 
 // Quit or set the view
