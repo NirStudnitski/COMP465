@@ -5,16 +5,38 @@
 # include "Ruber.hpp"
 
 // Shapes
-const int nModels = 19;
-const int nFacets = 17664;
+const int nAsteroids = 5;
+const int nModels = 6 + nAsteroids;
+
+const int nFacets = 4416;
 const int nFacetsWB = 4245;
 const int nFacetsMoon = 1104;
-const int nFacetsAsteroid = 195;
+const int nFacetsAsteroid = 16;
+const int nFacetsAsteroid2 = 16;
+const int nFacetsAsteroid3 = 16;
+const int nFacetsAsteroid4 = 16;
+const int nFacetsAsteroid5 = 16;
+
+
+int modelID; // to be used in vertex, shader and and other arrays
+/*  0 = ruber
+	1 = unum	
+	2 = warbird
+	3 = duo
+	4 = duo moon
+	5 = duo moon 2
+	6 = asteroid
+	7 = asteroid2
+	8 = asteroid3
+	9 = asteroid4
+	10 = asteroid5
+*/
 
 ruber * shape[nModels];
 
 // Model for shapes
-char * modelFile[nModels] = { 
+char * modelFile[] = 
+{ 
 	"ruber3d.tri", 
 	"ruber3d.tri", 
 	"warbird.tri", 
@@ -22,23 +44,17 @@ char * modelFile[nModels] = {
 	"moon.tri", 
 	"moon.tri", 
 	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri",
-	"asteroid.tri"
+	"asteroid2.tri",
+	"asteroid3.tri",
+	"asteroid4.tri",
+	"asteroid5.tri",
+	
 };
 
 // read how many facets in tri file
 
-const GLuint nVertices[nModels] = { 
+const GLuint nVertices[] = 
+{ 
 	nFacets * 3, 
 	nFacets * 3, 
 	nFacetsWB*3, 
@@ -46,18 +62,11 @@ const GLuint nVertices[nModels] = {
 	nFacetsMoon * 3, 
 	nFacetsMoon * 3, 
 	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3,
-	nFacetsAsteroid * 3
+	nFacetsAsteroid2 * 3,
+	nFacetsAsteroid3 * 3,
+	nFacetsAsteroid4 * 3,
+	nFacetsAsteroid5 * 3,
+	
 };
 
 // vectors for "model"
@@ -111,8 +120,8 @@ void init(void) {
 	glGenBuffers(nModels, buffer);
 	for (int i = 0; i < nModels; i++)
 	{
-		int shaderID;
-		switch (i)
+		int shaderID= 0;
+		if (i<=5) switch (i)
 		{
 			case 0: //shader for ruder
 				shaderID = 0;
@@ -132,48 +141,14 @@ void init(void) {
 			case 5: //shader for Duo's moon
 				shaderID = 2;
 				break;
-			case 6: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 7: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 8: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 9: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 10: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 11: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 12: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 13: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 14: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 15: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 16: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 17: //shader for asteroids
-				shaderID = 0;
-				break;
-			case 18: //shader for asteroids
-				shaderID = 0;
-				break;
+			
 		}
 		
-		boundingRadius[i] = loadModelBuffer(modelFile[i], nVertices[i], vao[i], buffer[i], shaderProgram[shaderID],
+		//assign the correct modelID
+		if (i >= 6 && i < 6 + nAsteroids) modelID = (i - 6) % 5 + 6;
+		else modelID = i;
+
+		boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
 			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
 
 		if (boundingRadius[i] == -1.0f) {
@@ -198,7 +173,7 @@ void init(void) {
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 	// create shape
-	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i);
+	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
 	
 
 	lastTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -249,7 +224,7 @@ void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
 	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime);
-	//warB->update();
+	
 }
 
 // Quit or set the view
