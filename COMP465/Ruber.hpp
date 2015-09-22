@@ -1,4 +1,3 @@
-
 # ifndef __INCLUDES465__
 # include "../includes465/include465.hpp"
 # define __INCLUDES465__
@@ -14,7 +13,6 @@ private:
 	glm::mat4 translationMatrix;
 	glm::vec3 rotationAxis;
 	float radians;
-	
 
 public:
 
@@ -71,18 +69,21 @@ public:
 			translationMatrix = glm::translate(glm::mat4(),
 				glm::vec3(1100, 0.0f, 0.0f));
 			break;
-
-		}
 		
-		
-			
+		case 6: //Asteroids
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(35, 20, 23));
+			rotationAxis = glm::vec3(0, 1, 0);
+			radians = glm::radians(0.1f + (random % 20) / 10.0f);
+			translationMatrix = glm::translate(glm::mat4(),
+				glm::vec3(-500 + rand() % 1000, -500 + rand() % 1000, -500 + rand() % 1000));
+			break;
+		}		
 	}
 	
 	glm::mat4 getModelMatrix(int i) {
 		
 			return(rotationMatrix * translationMatrix * scaleMatrix);
 			
-		
 	}
 
 	void update(int i, double t) {
