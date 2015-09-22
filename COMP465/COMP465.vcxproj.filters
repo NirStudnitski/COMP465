@@ -37,5 +37,8 @@
     <None Include="simpleVertex3.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="asteroid.tri">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
