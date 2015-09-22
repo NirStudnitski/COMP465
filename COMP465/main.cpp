@@ -5,20 +5,60 @@
 # include "Ruber.hpp"
 
 // Shapes
-const int nModels = 7;
+const int nModels = 19;
 const int nFacets = 17664;
 const int nFacetsWB = 4245;
 const int nFacetsMoon = 1104;
-const int nFacetsAsteroid = 264;
+const int nFacetsAsteroid = 195;
 
 ruber * shape[nModels];
 
 // Model for shapes
-char * modelFile[nModels] = { "ruber3d.tri", "ruber3d.tri", "warbird.tri", "ruber3d.tri", "moon.tri", "moon.tri", "asteroid.tri" };
+char * modelFile[nModels] = { 
+	"ruber3d.tri", 
+	"ruber3d.tri", 
+	"warbird.tri", 
+	"ruber3d.tri", 
+	"moon.tri", 
+	"moon.tri", 
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri",
+	"asteroid.tri"
+};
 
 // read how many facets in tri file
 
-const GLuint nVertices[nModels] = { nFacets * 3, nFacets * 3, nFacetsWB*3, nFacets * 3, nFacetsMoon * 3, nFacetsMoon * 3, nFacetsAsteroid * 3 };
+const GLuint nVertices[nModels] = { 
+	nFacets * 3, 
+	nFacets * 3, 
+	nFacetsWB*3, 
+	nFacets * 3, 
+	nFacetsMoon * 3, 
+	nFacetsMoon * 3, 
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3,
+	nFacetsAsteroid * 3
+};
 
 // vectors for "model"
 glm::vec4 vertex[];
@@ -93,6 +133,42 @@ void init(void) {
 				shaderID = 2;
 				break;
 			case 6: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 7: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 8: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 9: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 10: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 11: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 12: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 13: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 14: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 15: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 16: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 17: //shader for asteroids
+				shaderID = 0;
+				break;
+			case 18: //shader for asteroids
 				shaderID = 0;
 				break;
 		}
