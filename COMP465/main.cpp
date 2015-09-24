@@ -163,7 +163,7 @@ void init(void) {
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
 
 	// initially use a front view
-	eye = glm::vec3(0.0f, 0.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
+	eye = glm::vec3(0.0f, 500.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
 	at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 	up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 	viewMatrix = glm::lookAt(eye, at, up);
@@ -224,7 +224,7 @@ void display(void) {
 void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
-	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime);
+	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids);
 	
 }
 
@@ -233,12 +233,12 @@ void keyboard(unsigned char key, int x, int y) {
 	switch (key) {
 	case 033: case 'q':  case 'Q': exit(EXIT_SUCCESS); break;
 	case 'f': case 'F':  // front view
-		eye = glm::vec3(0.0f, 0.0f, 2000.0f);   // eye is 2000 "out of screen" from origin
+		eye = glm::vec3(0.0f, 500.0f, 2000.0f);   // eye is 2000 "out of screen" from origin
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 		strcpy(viewStr, " front view"); break;
-	case 'r': case 'R':  // bottom view
-		eye = glm::vec3(1000.0f, 0.0f, 0.0f);   // eye is 1000 right from origin
+	case 'r': case 'R':  
+		eye = glm::vec3(1000.0f, 250.0f, 0.0f);   // eye is 1000 right from origin
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 		strcpy(viewStr, " right view"); break;
