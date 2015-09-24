@@ -147,12 +147,12 @@ void init(void) {
 				break;
 			case 6: //shader for missile
 				shaderID = 0;
-				break;
+				break; 
 			
 		}
 		
 		//assign the correct modelID
-		if (i >= 6 && i < 6 + nAsteroids) modelID = (i - 6) % 5 + 6;
+		if (i >= 7 && i < 7 + nAsteroids) modelID = (i - 7) % 5 + 7;
 		else modelID = i;
 
 		boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
@@ -209,7 +209,7 @@ void display(void) {
 		ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 		glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 		glBindVertexArray(vao[i]);
-		if (i >= 6 && i < 6 + nAsteroids) modelID = (i - 6) % 5 + 6;
+		if (i >= 7 && i < 7 + nAsteroids) modelID = (i - 7) % 5 + 7;
 		else modelID = i;
 		glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 	}
