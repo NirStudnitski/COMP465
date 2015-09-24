@@ -18,18 +18,18 @@ public:
 
 	ruber(int number, int nAst) {
 		id = number;  
-		int random = rand()%50;   
+		int random = rand()%200;   
 		float randomf = rand() / 1000;
 
 		rotationMatrix = glm::mat4();  // no initial orientation
 
 		if (number >= 6 && number < 6 + nAst)
 		{
-			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, 20));
-			rotationAxis = glm::vec3(0, 1, 0);
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20+random%20, 20 + random % 20, 20 + random % 20));
+			rotationAxis = glm::vec3(0, 0.9, 0.1);
 			radians = glm::radians(4.0f);
 			translationMatrix = glm::translate(glm::mat4(),
-				glm::vec3((500+ random)* cos(randomf), 0.0f, (500 + random)* sin(randomf)));
+				glm::vec3((300+ random)* cos(randomf), 0.0f, (300 + random)* sin(randomf)));
 		}
 		else
 		{

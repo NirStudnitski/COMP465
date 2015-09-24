@@ -5,7 +5,7 @@
 # include "Ruber.hpp"
 
 // Shapes
-const int nAsteroids = 5;
+const int nAsteroids = 100;
 const int nModels = 6 + nAsteroids;
 
 const int nFacets = 4416;
@@ -47,7 +47,7 @@ char * modelFile[] =
 	"asteroid2.tri",
 	"asteroid3.tri",
 	"asteroid4.tri",
-	"asteroid5.tri",
+	"asteroid5.tri"
 	
 };
 
@@ -65,7 +65,7 @@ const GLuint nVertices[] =
 	nFacetsAsteroid2 * 3,
 	nFacetsAsteroid3 * 3,
 	nFacetsAsteroid4 * 3,
-	nFacetsAsteroid5 * 3,
+	nFacetsAsteroid5 * 3
 	
 };
 
@@ -202,8 +202,9 @@ void display(void) {
 		ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 		glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 		glBindVertexArray(vao[i]);
-		
-		glDrawArrays(GL_TRIANGLES, 0, nVertices[i]);
+		if (i >= 6 && i < 6 + nAsteroids) modelID = (i - 6) % 5 + 6;
+		else modelID = i;
+		glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 	}
 	glutSwapBuffers();
 	frameCount++;
