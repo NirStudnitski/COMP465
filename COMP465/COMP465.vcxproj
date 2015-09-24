@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="asteroid.tri" />
+    <None Include="missile.tri" />
     <None Include="simpleFragment.glsl" />
     <None Include="simpleVertex.glsl" />
     <None Include="simpleVertex2.glsl" />

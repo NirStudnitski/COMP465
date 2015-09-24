@@ -103,6 +103,13 @@ public:
 					glm::vec3(1100, 0.0f, 0.0f));
 				break;
 
+			case 6: //missile
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(50, 50, -50));
+				rotationAxis = glm::vec3(0, 1, 0);
+				radians = glm::radians(0.0f);
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 0.0, 1000.0f));
+				break;
 			}
 		}
 	}
@@ -127,7 +134,7 @@ public:
 		else if (i == 5) // moons
 			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 200 * sAmp2, 0.0f, 200 * cAmp2));
 
-		else if (i >= 6 && i<6+nAst) // ateroids rotation around center
+		else if (i >= 7 && i < 7 + nAst) // ateroids rotation around center
 			translationMatrix = glm::rotate(translationMatrix, radians*5, selfRotationAxis);
 			
 			rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);

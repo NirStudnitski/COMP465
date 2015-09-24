@@ -6,11 +6,12 @@
 
 // Shapes
 const int nAsteroids = 100;
-const int nModels = 6 + nAsteroids;
+const int nModels = 7 + nAsteroids;
 
 const int nFacets = 4416;
 const int nFacetsWB = 4245;
 const int nFacetsMoon = 1104;
+const int nFacetsMissile = 252;
 const int nFacetsAsteroid = 16;
 const int nFacetsAsteroid2 = 16;
 const int nFacetsAsteroid3 = 16;
@@ -25,11 +26,12 @@ int modelID; // to be used in vertex, shader and and other arrays
 	3 = duo
 	4 = duo moon
 	5 = duo moon 2
-	6 = asteroid
-	7 = asteroid2
-	8 = asteroid3
-	9 = asteroid4
-	10 = asteroid5
+	6 = missile
+	7 = asteroid
+	8 = asteroid2
+	9 = asteroid3
+	10 = asteroid4
+	11 = asteroid5
 */
 
 ruber * shape[nModels];
@@ -43,6 +45,7 @@ char * modelFile[] =
 	"ruber3d.tri", 
 	"moon.tri", 
 	"moon.tri", 
+	"missile.tri",
 	"asteroid.tri",
 	"asteroid2.tri",
 	"asteroid3.tri",
@@ -61,6 +64,7 @@ const GLuint nVertices[] =
 	nFacets * 3, 
 	nFacetsMoon * 3, 
 	nFacetsMoon * 3, 
+	nFacetsMissile * 3,
 	nFacetsAsteroid * 3,
 	nFacetsAsteroid2 * 3,
 	nFacetsAsteroid3 * 3,
@@ -140,6 +144,9 @@ void init(void) {
 				break;
 			case 5: //shader for Duo's moon
 				shaderID = 2;
+				break;
+			case 6: //shader for missile
+				shaderID = 0;
 				break;
 			
 		}
