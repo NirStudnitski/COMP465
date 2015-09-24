@@ -27,7 +27,7 @@ public:
 
 		if (number >= 6 && number < 6 + nAst)
 		{
-			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20+random%20, 20 + random % 20, 20 + random % 20));
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30+random%20, 30 + random % 20, 30 + random % 20));
 			rotationAxis = glm::vec3(0, 0.9, 0.0);
 			switch (number % 6)
 			{

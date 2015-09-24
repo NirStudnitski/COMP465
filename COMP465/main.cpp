@@ -11,11 +11,11 @@ const int nModels = 6 + nAsteroids;
 const int nFacets = 4416;
 const int nFacetsWB = 4245;
 const int nFacetsMoon = 1104;
-const int nFacetsAsteroid = 16;
-const int nFacetsAsteroid2 = 16;
+const int nFacetsAsteroid = 118;
+const int nFacetsAsteroid2 = 82;
 const int nFacetsAsteroid3 = 16;
-const int nFacetsAsteroid4 = 16;
-const int nFacetsAsteroid5 = 16;
+const int nFacetsAsteroid4 = 20;
+const int nFacetsAsteroid5 = 20;
 
 
 int modelID; // to be used in vertex, shader and and other arrays
