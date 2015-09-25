@@ -14,6 +14,7 @@ private:
 	glm::vec3 rotationAxis;
 	glm::vec3 selfRotationAxis;
 	float radians;
+	bool orbit = true;
 
 public:
 
@@ -25,7 +26,7 @@ public:
 
 		rotationMatrix = glm::mat4();  // no initial orientation
 
-		if (number >= 6 && number < 6 + nAst)
+		if (number >= 7 && number < 7 + nAst)
 		{
 			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30+random%20, 30 + random % 20, 30 + random % 20));
 			rotationAxis = glm::vec3(0, 0.9, 0.0);
@@ -50,7 +51,7 @@ public:
 					selfRotationAxis = glm::vec3(0.5, 0.0, 0.0);
 					break;
 			}
-			radians = glm::radians(3.0f - (float) random/100);
+			radians = glm::radians(3.6f - (float) random/100);
 			translationMatrix = glm::translate(glm::mat4(),
 				glm::vec3((500+ random)* cos(randomf), 0.0f, (500 + random)* sin(randomf)));
 		}
@@ -103,13 +104,26 @@ public:
 					glm::vec3(1100, 0.0f, 0.0f));
 				break;
 
+			case 6: //missile
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, -30));
+				rotationAxis = glm::vec3(1, 0, 0);
+				rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+				radians = glm::radians(0.0f);
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(280.0f, 0.0, 1080.0f));
+				orbit = false;
+				break; 
 			}
 		}
 	}
 	
 	glm::mat4 getModelMatrix(int i) {
 		
+		if (orbit == true) {
 			return(rotationMatrix * translationMatrix * scaleMatrix);
+		}
+		else
+			return(translationMatrix * rotationMatrix * scaleMatrix);
 			
 	}
 
@@ -127,8 +141,12 @@ public:
 		else if (i == 5) // moons
 			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 200 * sAmp2, 0.0f, 200 * cAmp2));
 
-		else if (i >= 6 && i<6+nAst) // ateroids rotation around center
+		else if (i >= 7 && i < 7 + nAst) // ateroids rotation around center
 			translationMatrix = glm::rotate(translationMatrix, radians*5, selfRotationAxis);
+
+		if (i == 6) {
+			return;
+		}
 			
 			rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
 	}
