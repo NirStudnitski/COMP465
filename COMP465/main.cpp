@@ -152,13 +152,12 @@ void init(void) {
 			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
 
 		if (boundingRadius[i] == -1.0f) {
-			//printf("loadTriModel error:  returned -1.0f \n");
+			printf("loadTriModel error:  returned -1.0f \n");
 			exit(1);
 		}
 
-		else {
-			//printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
-		}
+		else
+			printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
 	}
 	
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
@@ -227,7 +226,6 @@ void update(int i) {
 	glutTimerFunc(timerDelay, update, 1);
 	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids);
 	
-	
 }
 
 // Quit or set the view
@@ -260,7 +258,7 @@ int main(int argc, char* argv[]) {
 	glutInitWindowSize(1200, 600);
 	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
-	glutCreateWindow("465 project {f, t, r} : front view");
+	glutCreateWindow("465 manyCubes Example {f, t, r} : front view");
 	// initialize and verify glew
 	glewExperimental = GL_TRUE;  // needed my home system 
 	GLenum err = glewInit();
