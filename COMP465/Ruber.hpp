@@ -24,7 +24,7 @@ public:
 		
 		float randomf = rand() / 1000;
 
-		rotationMatrix = glm::mat4();  // no initial orientation
+		rotationMatrix = glm::mat4();  
 
 		if (number >= 7 && number < 7 + nAst)
 		{
