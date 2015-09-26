@@ -59,7 +59,7 @@ public:
 					selfRotationAxis = glm::vec3(0.5, 0.0, 0.0);
 					break;
 			}
-			radians = glm::radians(3.6f - (float) random/100);
+			radians = glm::radians(1.4f - (float) random/250);
 			translationMatrix = glm::translate(glm::mat4(),
 				glm::vec3((500+ random)* cos(randomf), 0.0f, (500 + random)* sin(randomf)));
 		}
@@ -75,32 +75,32 @@ public:
 			case 1: //unum
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(100, 100, 100));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(1.5f);
+				radians = glm::radians(0.5f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(800, 0.0f, 0.0f));
 				break;
 
 			case 2: //warbird
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(50, 50, -50));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, -20));
 				rotationAxis = glm::vec3(0, 0, 1);
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 0.0, 1000.0f));
+					glm::vec3(0, 700.0, 1600.0f));
 				orbit = false;
 				break;
 
 			case 3: //Duo
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(60, 60, 60));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(1.0f);
+				radians = glm::radians(0.30f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1200, 0.0f, 0.0f));
 				break;
 
 			case 4: //Duo's outer moon - suspended between duo and ruber
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(40, 40, 40));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(1.0f);
+				radians = glm::radians(0.30f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1100, 0.0f, 0.0f));
 				break;
@@ -108,7 +108,7 @@ public:
 			case 5: //Duo's moon orbiting duo
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(1.0f);
+				radians = glm::radians(0.30f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1000, 0.0f, 0.0f));
 				break;
@@ -162,7 +162,7 @@ public:
 
 
 		else if (i >= nNonAstObj && i < nNonAstObj + nAst) // ateroids rotation around center
-			translationMatrix = glm::rotate(translationMatrix, radians*5, selfRotationAxis);
+			translationMatrix = glm::rotate(translationMatrix, radians*20, selfRotationAxis);
 
 		if (i == 6) // missile
 		{

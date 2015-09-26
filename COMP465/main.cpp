@@ -184,7 +184,7 @@ void init(void) {
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
 
 	// initially use a front view
-	eye = glm::vec3(0.0f, 500.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
+	eye = glm::vec3(0.0f, 1000.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
 	at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 	up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 	viewMatrix = glm::lookAt(eye, at, up);
