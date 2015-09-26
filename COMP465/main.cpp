@@ -294,8 +294,13 @@ void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
 	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch);
-	// thrust = 0;
-	 //roll = 0;
+
+	 //die-down of roll and pitch
+	 if (pitch < 0) pitch += 0.001; //
+	 else if (pitch > 0) pitch -= 0.001; //
+	 if (roll < 0) roll += 0.001; //
+	 else if (roll > 0)roll -= 0.001; //
+	
 	
 }
 
