@@ -12,9 +12,17 @@ private:
 	glm::mat4 scaleMatrix;
 	glm::mat4 translationMatrix;
 	glm::vec3 rotationAxis;
+	glm::vec3 rotationAxisPitch;
+	glm::vec3 rotationAxisRoll;
 	glm::vec3 selfRotationAxis;
 	float radians;
+	const int nNonAstObj = 7; // number of non-asteroid objects
 	bool orbit = true;
+	
+	
+	void printText2D(const char * text, int x, int y, int size);
+	void cleanupText2D();
+
 
 public:
 
@@ -26,7 +34,7 @@ public:
 
 		rotationMatrix = glm::mat4();  
 
-		if (number >= 7 && number < 7 + nAst)
+		if (number >= nNonAstObj && number < nNonAstObj + nAst)
 		{
 			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30+random%20, 30 + random % 20, 30 + random % 20));
 			rotationAxis = glm::vec3(0, 0.9, 0.0);
@@ -74,10 +82,11 @@ public:
 
 			case 2: //warbird
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(50, 50, -50));
-				rotationAxis = glm::vec3(0, 1, 0);
+				rotationAxis = glm::vec3(0, 0, 1);
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(0, 0.0, 1000.0f));
+				orbit = false;
 				break;
 
 			case 3: //Duo
@@ -88,20 +97,20 @@ public:
 					glm::vec3(1200, 0.0f, 0.0f));
 				break;
 
-			case 4: //Duo's moon
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
-				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(1.0f);
-				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(1300, 0.0f, 0.0f));
-				break;
-
-			case 5: //Duo's moon
+			case 4: //Duo's outer moon - suspended between duo and ruber
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(1.0f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1100, 0.0f, 0.0f));
+				break;
+
+			case 5: //Duo's moon orbiting duo
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
+				rotationAxis = glm::vec3(0, 1, 0);
+				radians = glm::radians(1.0f);
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(1000, 0.0f, 0.0f));
 				break;
 
 			case 6: //missile
@@ -127,27 +136,40 @@ public:
 			
 	}
 
-	void update(int i, double t, int nAst) {
+	void update(int i, double t, int nAst, float roll, float thrust, float pitch) {
 		
 		// for the moons' orbit around duo
 		double sAmp = sin(t / 300);
 		double cAmp = cos(t / 300);
-		double sAmp2 = sin(t / 500);
-		double cAmp2 = cos(t / 500);
+		
+	
 
-		if (i == 4) // moons
+
+		if (i == 2) //warbird
+		{
+			//roll and pitch
+			rotationAxisPitch = glm::vec3(translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2]);
+			rotationAxisRoll = glm::vec3(translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2]);
+			rotationMatrix = glm::rotate(rotationMatrix, pitch, rotationAxisPitch);
+			rotationMatrix = glm::rotate(rotationMatrix, roll, rotationAxisRoll);
+
+			//thrust
+			for (int i = 0; i < 3;i++) // move in the direction of 'at' times thrust
+				translationMatrix[3][i] -= rotationMatrix[2][i]*thrust;
+		}
+		else if (i == 4) // moon orbiting duo
 			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 100 * sAmp, 0.0f, 100 * cAmp));
 
-		else if (i == 5) // moons
-			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 200 * sAmp2, 0.0f, 200 * cAmp2));
 
-		else if (i >= 7 && i < 7 + nAst) // ateroids rotation around center
+		else if (i >= nNonAstObj && i < nNonAstObj + nAst) // ateroids rotation around center
 			translationMatrix = glm::rotate(translationMatrix, radians*5, selfRotationAxis);
 
-		if (i == 6) {
+		if (i == 6) // missile
+		{
 			return;
 		}
 			
-			rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
+		if (i!=2)	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
+		
 	}
 };

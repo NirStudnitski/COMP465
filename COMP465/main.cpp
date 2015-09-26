@@ -3,10 +3,17 @@
 # include <fstream>
 
 # include "Ruber.hpp"
+#include <GL/glut.h>
+#include <stdio.h>
 
 // Shapes
 const int nAsteroids = 200;
-const int nModels = 7 + nAsteroids;
+const int nNonAstObj = 7; // number of non-asteroid objects
+const int nModels = nNonAstObj + nAsteroids;
+
+float roll = 0; //left and right keys
+float thrust = 0; // 'a' for more thrust, 'z' for less
+float pitch = 0; //up and down keys
 
 const int nFacets = 4416;
 const int nFacetsWB = 4245;
@@ -18,6 +25,9 @@ const int nFacetsAsteroid2 = 82;
 const int nFacetsAsteroid3 = 16;
 const int nFacetsAsteroid4 = 20;
 const int nFacetsAsteroid5 = 20;
+
+
+
 
 
 int modelID; // to be used in vertex, shader and and other arrays
@@ -36,6 +46,7 @@ int modelID; // to be used in vertex, shader and and other arrays
 */
 
 ruber * shape[nModels];
+char * speedS = "bla";
 
 // Model for shapes
 char * modelFile[] = 
@@ -153,7 +164,7 @@ void init(void) {
 		}
 		
 		//assign the correct modelID
-		if (i >= 7 && i < 7 + nAsteroids) modelID = (i - 7) % 5 + 7;
+		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
 		else modelID = i;
 
 		boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
@@ -203,20 +214,68 @@ void updateTitle() {
 	glutSetWindowTitle(titleStr);
 }
 
+void drawString(void * font, char *s) {
+	unsigned int i;
+	glColor3f(0.0, 1.0, 0.0);
+	
+
+
+	for (i = 0; i < strlen(s); i++)
+		glutBitmapCharacter(font, s[i]);
+}
+
+
+
+
+
+
+
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	
+
 	// update model matrix, set MVP, draw
-	for (int i = 0; i < nModels; i++) {
+	for (int i = 0; i < nModels; i++) 
+	{
 		modelMatrix = shape[i]->getModelMatrix(i);
 		ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 		glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 		glBindVertexArray(vao[i]);
-		if (i >= 7 && i < 7 + nAsteroids) modelID = (i - 7) % 5 + 7;
+		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
 		else modelID = i;
 		glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 	}
+	
+	glDisable(GL_TEXTURE_2D);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	
+	gluOrtho2D(0.0, 800, 0.0, 500);
+	
+	
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	
+	glRasterPos2i(10, 10);
+	drawString(GLUT_BITMAP_9_BY_15, speedS);
+	
+	
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	glEnable(GL_TEXTURE_2D);
+	
+
+	
 	glutSwapBuffers();
+
 	frameCount++;
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -234,7 +293,9 @@ void display(void) {
 void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
-	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids);
+	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch);
+	// thrust = 0;
+	 //roll = 0;
 	
 }
 
@@ -247,7 +308,7 @@ void keyboard(unsigned char key, int x, int y) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 		strcpy(viewStr, " front view"); break;
-	case 'r': case 'R':  
+	case 'r': case 'R':
 		eye = glm::vec3(1000.0f, 250.0f, 0.0f);   // eye is 1000 right from origin
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
@@ -257,6 +318,34 @@ void keyboard(unsigned char key, int x, int y) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin  
 		up = glm::vec3(0.0f, 0.0f, -1.0f);   // camera's up is looking towards -Z vector
 		strcpy(viewStr, " top view"); break;
+	case 'a': case 'A':  
+		thrust+= 1.0f;
+		 break;
+	case 'z': case 'Z':
+		thrust -= 1.0f;
+		break;
+	
+	}
+		viewMatrix = glm::lookAt(eye, at, up);
+		updateTitle();
+	
+}
+void specialKey(int key, int x, int y) {
+	switch (key)
+	{
+
+	case GLUT_KEY_RIGHT:  
+			roll-=0.01f;
+			break;
+	case GLUT_KEY_LEFT: 
+		roll+=0.01F;
+		break;
+	case GLUT_KEY_UP: 
+		pitch -= 0.01f;
+		break;
+	case GLUT_KEY_DOWN: 
+		pitch += 0.01f;
+		break;
 	}
 	viewMatrix = glm::lookAt(eye, at, up);
 	updateTitle();
@@ -283,6 +372,7 @@ int main(int argc, char* argv[]) {
 	// initialize scene
 	init();
 	// set glut callback functions
+	glutSpecialFunc(specialKey);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
