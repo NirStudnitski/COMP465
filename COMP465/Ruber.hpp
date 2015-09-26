@@ -148,8 +148,8 @@ public:
 		if (i == 2) //warbird
 		{
 			//roll and pitch
-			rotationAxisPitch = glm::vec3(translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2]);
-			rotationAxisRoll = glm::vec3(translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2]);
+			rotationAxisPitch = glm::vec3(rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2]);
+			rotationAxisRoll = glm::vec3(rotationMatrix[2][0], rotationMatrix[2][1], rotationMatrix[2][2]);
 			rotationMatrix = glm::rotate(rotationMatrix, pitch, rotationAxisPitch);
 			rotationMatrix = glm::rotate(rotationMatrix, roll, rotationAxisRoll);
 
