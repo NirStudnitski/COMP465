@@ -20,8 +20,8 @@ private:
 	bool orbit = true;
 	
 	
-	void printText2D(const char * text, int x, int y, int size);
-	void cleanupText2D();
+	//void printText2D(const char * text, int x, int y, int size);
+	//void cleanupText2D();
 
 
 public:
@@ -134,6 +134,19 @@ public:
 		else
 			return(translationMatrix * rotationMatrix * scaleMatrix);
 			
+	}
+
+	glm::mat4 getTranslationMatrix(int i) {
+
+		
+			return translationMatrix;
+
+	}
+	glm::mat4 getRotationMatrix(int i) {
+
+
+		return rotationMatrix;
+
 	}
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch) {

@@ -27,6 +27,8 @@ const int nFacetsAsteroid4 = 20;
 const int nFacetsAsteroid5 = 20;
 
 
+int trackShip = 0;
+
 
 
 
@@ -95,7 +97,7 @@ int Index = 0;  // global variable indexing into VBO arrays
 
 				// display state and "state strings" for title display
 				// window title strings
-char baseStr[50] = "Warbird: Nir and Megan! Press {f, t, r} : ";
+char baseStr[100] = "Warbird: Nir and Megan! Press f, t, r for static views, and 1, 2, 3 to follow ship ";
 char fpsStr[15], viewStr[15] = " front view";
 char titleStr[100];
 
@@ -111,6 +113,7 @@ glm::mat4 projectionMatrix;     // set in reshape()
 glm::mat4 modelMatrix;          // set in shape[i]-->updateDraw()
 glm::mat4 viewMatrix;           // set in keyboard()
 glm::mat4 ModelViewProjectionMatrix; // set in display();
+glm::mat4 behindShipView; // to be used in seeing behind the warbird
 
 
 									 // vectors and values for lookAt
@@ -240,6 +243,7 @@ void display(void) {
 	{
 		modelMatrix = shape[i]->getModelMatrix(i);
 		ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+		
 		glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 		glBindVertexArray(vao[i]);
 		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
@@ -247,6 +251,8 @@ void display(void) {
 		glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 	}
 	
+	// text on screen - desn't work yet
+	/*
 	glDisable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -271,7 +277,7 @@ void display(void) {
 	glPopMatrix();
 
 	glEnable(GL_TEXTURE_2D);
-	
+	*/
 
 	
 	glutSwapBuffers();
@@ -294,35 +300,91 @@ void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
 	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch);
-
+	
 	 //die-down of roll and pitch
 	 if (pitch < 0) pitch += 0.001; //
 	 else if (pitch > 0) pitch -= 0.001; //
 	 if (roll < 0) roll += 0.001; //
 	 else if (roll > 0)roll -= 0.001; //
 	
+	 // camera tracks ship:
+	 if (trackShip!=0)
+		 switch(trackShip)
+	 {
+		 case 1:
+		 
+
+			 behindShipView = shape[2]->getModelMatrix(2);
+
+			 eye = glm::vec3(behindShipView[3][0], behindShipView[3][1] + 200, behindShipView[3][2] + 500);
+			 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
+			 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
+			 strcpy(viewStr, " Ship View");
+			 viewMatrix = glm::lookAt(eye, at, up);
+		  break;
+	case 2: //behind ship view
+	 
+
+
+		 behindShipView = shape[2]->getModelMatrix(2);
+
+		 eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 10, behindShipView[3][1] - behindShipView[2][1] * 10, behindShipView[3][2] - behindShipView[2][2] * 10);
+		 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
+		 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
+		 strcpy(viewStr, " behind Ship View");
+		 viewMatrix = glm::lookAt(eye, at, up);
+	 break;
+	case 3: //cokpit view
+	
+
+
+		behindShipView = shape[2]->getModelMatrix(2);
+
+		eye = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 3, behindShipView[3][1] + behindShipView[2][1] * 3, behindShipView[3][2] + behindShipView[2][2] * 3);
+		at = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 4, behindShipView[3][1] + behindShipView[2][1] * 4, behindShipView[3][2] + behindShipView[2][2] * 4);
+		up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
+		strcpy(viewStr, " cockpit View");
+		viewMatrix = glm::lookAt(eye, at, up);
+	 break;
+}
 	
 }
 
 // Quit or set the view
 void keyboard(unsigned char key, int x, int y) {
+	
 	switch (key) {
 	case 033: case 'q':  case 'Q': exit(EXIT_SUCCESS); break;
 	case 'f': case 'F':  // front view
+		trackShip = 0;
 		eye = glm::vec3(0.0f, 500.0f, 2000.0f);   // eye is 2000 "out of screen" from origin
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 		strcpy(viewStr, " front view"); break;
 	case 'r': case 'R':
+		trackShip = 0;
 		eye = glm::vec3(1000.0f, 250.0f, 0.0f);   // eye is 1000 right from origin
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 		strcpy(viewStr, " right view"); break;
 	case 't': case 'T':  // top view
+		trackShip = 0;
 		eye = glm::vec3(0.0f, 3000.0f, 0.0f);   // eye is 3000 up from origin
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin  
 		up = glm::vec3(0.0f, 0.0f, -1.0f);   // camera's up is looking towards -Z vector
 		strcpy(viewStr, " top view"); break;
+	case '1':   // follow ship view
+		trackShip = 1;
+		 break;
+	case '2':   // follow ship behind view
+		trackShip = 2;
+		break;
+
+	case '3':   // cockpit view
+		trackShip = 3;
+		break;
+
+
 	case 'a': case 'A':  
 		thrust+= 1.0f;
 		 break;
@@ -352,8 +414,8 @@ void specialKey(int key, int x, int y) {
 		pitch += 0.01f;
 		break;
 	}
-	viewMatrix = glm::lookAt(eye, at, up);
-	updateTitle();
+	
+	
 }
 
 int main(int argc, char* argv[]) {
