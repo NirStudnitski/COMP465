@@ -111,12 +111,30 @@ char * vertexShaderFile[3] = { "simpleVertex.glsl", "warbirdVertex.glsl" , "simp
 char * fragmentShaderFile[3] = {"simpleFragment.glsl", "warbirdFragment.glsl", "simpleFragment3.glsl" };
 GLuint MVP;  // Model View Projection matrix's handle
 GLuint ROT;  // rotation matrix's handle
+GLuint TOT;  // tanslationMatrix2's handle
 glm::mat4 projectionMatrix;     // set in reshape()
 glm::mat4 modelMatrix;          // set in shape[i]-->updateDraw()
 glm::mat4 viewMatrix;           // set in keyboard()
 glm::mat4 ModelViewProjectionMatrix; // set in display();
 glm::mat4 behindShipView; // to be used in seeing behind the warbird
+
+//uniform variables to be passed to shader
 glm::mat4 rotationMatrix2;
+glm::mat4 translationMatrix2;
+
+//two suns: ruber and duo******************************************
+glm::vec3 ruberPos = glm::vec3(0.0f, 0.0f, 0.0f); //position
+GLuint PR;  //handle
+
+glm::vec3 duoPos;//position
+GLuint PD;  //handle
+
+glm::vec4 ruberLightColor = glm::vec4(0.9f,0.9f,1.0f,1.0f);
+GLuint CR;  //handle
+
+glm::vec4 duoLightColor = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f);
+GLuint CD;  //handle
+//*******************************************************
 
 
 									 // vectors and values for lookAt
@@ -192,7 +210,12 @@ void init(void) {
 	
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
 	ROT = glGetUniformLocation(shaderProgram[1], "rotation");
-	//glUseProgram(shaderProgram[1]);
+	TOT = glGetUniformLocation(shaderProgram[1], "translation");
+	PR = glGetUniformLocation(shaderProgram[1], "posR");
+	PD = glGetUniformLocation(shaderProgram[1], "posD");
+	CR = glGetUniformLocation(shaderProgram[1], "colR");
+	CD = glGetUniformLocation(shaderProgram[1], "colR");
+	
 	// initially use a front view
 	eye = glm::vec3(0.0f, 1000.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
 	at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
@@ -254,8 +277,14 @@ void display(void) {
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getRotationMatrix(ia);
+			translationMatrix2 = shape[ia]->getTranslationMatrix(ia);
+			//position of light source at 0,0,0 to the ship
+			duoPos = shape[3]->getPosition(3);
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
+			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2)); 
+			glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
+			glUniform3fv(PD, 1, glm::value_ptr(duoPos));
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
@@ -420,7 +449,7 @@ void keyboard(unsigned char key, int x, int y) {
 	
 	}
 		viewMatrix = glm::lookAt(eye, at, up);
-		updateTitle();
+		//updateTitle();
 	
 }
 void specialKey(int key, int x, int y) {

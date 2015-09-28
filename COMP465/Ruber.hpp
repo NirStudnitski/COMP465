@@ -85,7 +85,7 @@ public:
 				rotationAxis = glm::vec3(0, 0, 1);
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 700.0, 1600.0f));
+					glm::vec3(0, 0.0, 1600.0f));
 				orbit = false;
 				break;
 
@@ -125,7 +125,12 @@ public:
 			}
 		}
 	}
-	
+
+	glm::vec3 getPosition(int i)
+	{
+		return glm:: vec3(translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2]);
+	}
+
 	glm::mat4 getModelMatrix(int i) {
 		
 		if (orbit == true) {
