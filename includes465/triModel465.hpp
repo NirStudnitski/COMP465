@@ -1,40 +1,3 @@
-/*
-triModel465.hpp
-
-Two utility functions:  loadTriModel(...) and loadModelBuffer(...)
-
-Using loadModelBuffer(...) in your OpenGL core application will call
-loadTriModel(...) to read the model's file data.
-
-LoadTriModel(...) reads a *.tri model file exported from AC3D and creates
-glm::vec4 arrays for vertex and color and a glm::vec3 array normal for 
-surface data.  A vec4 color value and a vec3 normal value is computed 
-for every vertex (not surface).
-
-The 3 glm::vec? parameters are empty on call and with values
-on return.  
-
-Function's 4 assumptions:
-1.  the *.tri model is centered at (0,0,0).
-2.  The *.tri model has only triangles, no co-linear edges/triangle
-2.  the *.tri model's vertices have been optimized ( Object | OptimizeVertices ... )
-3.  the *.tri model's surfaces have been optimized ( Object | OptimizeSurfaces ... )
-
-Use loadModelBuffer(...) to set *.tri model data into vao's vbo buffer.
-
-Functions prints various error messages, with error returns -1.0f
-Functions returns the bounding radius of the model with valid model file.
-
-Note use of std::abs(...) instead of abs(...)
-
-This is for gnu's g++ compiler.  It does not provide abs overloaded
-for floats.  abs(float) implicitly converts to abs(int) w/o warning!
-Models with a bounding 1 > radius > 0 will truncate to a bounding
-radius of 0.0 and so not display.
-
-Mike Barnes
-10/11/2013
-*/
 
 float loadTriModel(char * fileName, int nVertices, glm::vec4 vertex[], glm::vec4 color[], glm::vec3 normal[]) {
   const int X = 0, Y = 1, Z = 2;
@@ -129,11 +92,12 @@ float loadModelBuffer(char modelFile[25], GLuint nVertices,
   glm::vec3 * normal = (glm::vec3 *) calloc(vec3Size, sizeof(glm::vec3));
   // get the model file data
   boundingRadius= loadTriModel(modelFile, nVertices, vertex, color, normal);
+
   if (boundingRadius == -1.0f) {
-    printf("loadTriModel error:  returned -1.0f \n");
+   // printf("loadTriModel error:  returned -1.0f \n");
     return boundingRadius; }
-    else
-      printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
+   // else
+   //   printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
 
   // printf("sizeof[%d]:  vec3 %d, vec4 %d, normal %d \n", modelID, vec3Size, vec4Size);
   // fill the model's buffer

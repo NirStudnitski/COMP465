@@ -2,7 +2,7 @@
 
 in vec4 vPosition;
 in vec4 vColor;
-in vec3 vNormal;  // not used
+in vec3 vNormal;  
 
 uniform mat4 ModelViewProjection;  // = projection * view * model
 out vec4 color;

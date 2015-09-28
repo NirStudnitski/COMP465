@@ -31,9 +31,6 @@
     <None Include="simpleVertex.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="simpleVertex2.glsl">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="simpleVertex3.glsl">
       <Filter>Source Files</Filter>
     </None>
@@ -41,6 +38,15 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="missile.tri">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="simpleFragment3.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="warbirdFragment.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="warbirdVertex.glsl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

@@ -29,6 +29,7 @@ const int nFacetsAsteroid5 = 20;
 
 int trackShip = 0;
 
+glm::vec4 lightSource(1.0f, 1.0f, 0.0f,1.0f);
 
 
 
@@ -106,14 +107,16 @@ GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 GLuint vao[nModels];  // VertexArrayObject
 GLuint buffer[nModels];
 GLuint shaderProgram[3];
-char * vertexShaderFile[3] = { "simpleVertex.glsl", "simpleVertex2.glsl" , "simpleVertex3.glsl" };
-char * fragmentShaderFile = "simpleFragment.glsl";
+char * vertexShaderFile[3] = { "simpleVertex.glsl", "warbirdVertex.glsl" , "simpleVertex3.glsl" };
+char * fragmentShaderFile[3] = {"simpleFragment.glsl", "warbirdFragment.glsl", "simpleFragment3.glsl" };
 GLuint MVP;  // Model View Projection matrix's handle
+GLuint ROT;  // rotation matrix's handle
 glm::mat4 projectionMatrix;     // set in reshape()
 glm::mat4 modelMatrix;          // set in shape[i]-->updateDraw()
 glm::mat4 viewMatrix;           // set in keyboard()
 glm::mat4 ModelViewProjectionMatrix; // set in display();
 glm::mat4 behindShipView; // to be used in seeing behind the warbird
+glm::mat4 rotationMatrix2;
 
 
 									 // vectors and values for lookAt
@@ -128,8 +131,11 @@ double currentTime, lastTime, timeInterval;
 
 
 void init(void) {
-	for (int i = 0; i < 3;i++)  shaderProgram[i] = loadShaders(vertexShaderFile[i], fragmentShaderFile);
-	glUseProgram(shaderProgram[0]);
+	
+
+	for (int i = 0; i < 3; i++) 
+		shaderProgram[i] = loadShaders(vertexShaderFile[i], fragmentShaderFile[i]);
+	
 
 	glGenVertexArrays(nModels, vao);
 	//glBindVertexArray(vao);
@@ -137,10 +143,14 @@ void init(void) {
 	// Create and initialize a buffer object
 	// GLuint buffer;
 	glGenBuffers(nModels, buffer);
+
+
+	//glUseProgram(0);
 	for (int i = 0; i < nModels; i++)
 	{
 		int shaderID= 0;
-		if (i<=5) switch (i)
+		
+		if (i<=nNonAstObj) switch (i)
 		{
 			case 0: //shader for ruder
 				shaderID = 0;
@@ -150,6 +160,7 @@ void init(void) {
 				break;
 			case 2: //shader for Warbird
 				shaderID = 1;
+				
 				break;
 			case 3: //shader for Duo
 				shaderID = 0;
@@ -169,23 +180,19 @@ void init(void) {
 		//assign the correct modelID
 		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
 		else modelID = i;
-
-		boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
+		
+		 boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
 			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
-
-		if (boundingRadius[i] == -1.0f) {
-		//	printf("loadTriModel error:  returned -1.0f \n");
-			exit(1);
-		}
-
-		else
-		{
-			//printf("loaded %s model with %7.2f bounding radius \n", modelFile, boundingRadius);
-		}
+		
+		
+		
+		if (boundingRadius[i] == -1.0f)  exit(1);
+		
 	}
 	
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
-
+	ROT = glGetUniformLocation(shaderProgram[1], "rotation");
+	//glUseProgram(shaderProgram[1]);
 	// initially use a front view
 	eye = glm::vec3(0.0f, 1000.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
 	at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
@@ -194,7 +201,7 @@ void init(void) {
 
 	// set render state values
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
@@ -239,16 +246,34 @@ void display(void) {
 	
 
 	// update model matrix, set MVP, draw
-	for (int i = 0; i < nModels; i++) 
+	for (int ia = 0; ia < nModels; ia++) 
 	{
-		modelMatrix = shape[i]->getModelMatrix(i);
-		ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
-		
-		glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
-		glBindVertexArray(vao[i]);
-		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
-		else modelID = i;
-		glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+		if (ia == 2)
+		{
+			glUseProgram(shaderProgram[1]);
+			modelMatrix = shape[ia]->getModelMatrix(ia);
+			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+			rotationMatrix2 = shape[ia]->getRotationMatrix(ia);
+			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
+			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
+			glBindVertexArray(vao[ia]);
+			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
+			else modelID = ia;
+			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+		}
+		else
+		{
+			glUseProgram(shaderProgram[0]);
+			modelMatrix = shape[ia]->getModelMatrix(ia);
+			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+
+			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
+			
+			glBindVertexArray(vao[ia]);
+			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
+			else modelID = ia;
+			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+		}
 	}
 	
 	// text on screen - desn't work yet
@@ -286,12 +311,13 @@ void display(void) {
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
 	timeInterval = currentTime - lastTime;
+	/*
 	if (timeInterval >= 1000) {
 		sprintf(fpsStr, " fps %4d", (int)(frameCount / (timeInterval / 1000.0f)));
 		lastTime = currentTime;
 		frameCount = 0;
 		updateTitle();
-	}
+	}*/
 }
 
 // Animate scene objects by updating their transformation matrices
