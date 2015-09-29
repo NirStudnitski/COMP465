@@ -85,14 +85,14 @@ public:
 				rotationAxis = glm::vec3(0, 0, 1);
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 0.0, 1600.0f));
+					glm::vec3(0, -100.0, 1600.0f));
 				orbit = false;
 				break;
 
 			case 3: //Duo
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(60, 60, 60));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(0.30f);
+				radians = glm::radians(3.30f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1200, 0.0f, 0.0f));
 				break;

@@ -42,6 +42,8 @@ vec3 N = normalize (vN);
 float intensity = dot(N,R);
 float intensity2 = dot(N,posD);
 intensity = max(intensity, 0);
+
+intensity2*=-1;
 intensity2 = max(intensity2, 0);
 intensity = intensity* intensityR;
 intensity2 = intensity2* intensityD;

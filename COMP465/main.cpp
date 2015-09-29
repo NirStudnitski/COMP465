@@ -304,7 +304,7 @@ void display(void) {
 			glUseProgram(shaderProgram[1]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
-			rotationMatrix2 = shape[ia]->getRotationMatrix(ia);
+			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
 			translationMatrix2 = shape[ia]->getTranslationMatrix(ia);
 			duoModelMat = shape[3]->getModelMatrix(3);
 
@@ -318,15 +318,15 @@ void display(void) {
 				(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
 
 			//fractional intensity
-			float sum = distanceToR + distanceToD;
+			float sum = (distanceToR + distanceToD)/3;
 
 			intensityR = (float) distanceToR / sum;
 			intensityD = (float) distanceToD / sum;
 
 			//normalised pointer vectors to Ruber and Duo
 			R = normalize(glm:: vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
-			posD = normalize(glm::vec3(-translationMatrix2[3][0] + duoModelMat[3][0], -translationMatrix2[3][1] 
-									+ duoModelMat[3][1], -translationMatrix2[3][2] + duoModelMat[3][2]));
+			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], translationMatrix2[3][1] 
+									- duoModelMat[3][1], translationMatrix2[3][2] - duoModelMat[3][2]));
 
 			
 
