@@ -4,12 +4,26 @@ in vec4 vPosition;
 in vec4 vColor;
 in vec3 vNormal;  
 
-
+/*
+this shader creates two suns: ruber and duo, 
+of different shades. It also calculates intensity based on distance. 
+finally, there is ambient light from around the star field
+*/
 uniform mat4 ModelViewProjection;  // = projection * view * model
 uniform mat4 rotation;
 uniform mat4 translation;
-uniform vec3 posR;
+uniform mat4 transD;
+
+//normalized pointers to ruber and duo
+uniform vec3 R;
 uniform vec3 posD;
+
+uniform float intensityD;
+uniform float intensityR;
+
+uniform vec4 colR;
+uniform vec4 colD;
+
 out vec4 color;
 out vec3 vN;
 out vec3 nE;
@@ -24,16 +38,16 @@ rotation[0][2]*vNormal.x + rotation[1][2]*vNormal.y+ rotation[2][2]*vNormal.z
 
 );
 vec3 N = normalize (vN);
-vec3 P = normalize (vec3 (-translation[3][0],-translation[3][1],  -translation[3][2]));
 
-//D points to duo's position, normalized
-vec3 D = normalize (vec3 (-translation[3][0]+posD.x,-translation[3][1]+posD.y,  -translation[3][2]+posD.z));
-// dot the rotated normal N with location vector (assuming light source is at 0,0,0)
-float intensity =dot (N,P);
-float intensity2 = dot(N,D);
+float intensity = dot(N,R);
+float intensity2 = dot(N,posD);
 intensity = max(intensity, 0);
 intensity2 = max(intensity2, 0);
- color = vec4(intensity2+0.5f,0.5f , 0.5f, 1.0f);
- 
+intensity = intensity* intensityR;
+intensity2 = intensity2* intensityD;
+vec4 colRmod = vec4(colR.x * intensity, colR.y * intensity, colR.z * intensity, colR.w * intensity);
+vec4 colDmod = vec4(colD.x * intensity2, colD.y * intensity2, colD.z * intensity2, colD.w * intensity2);
+ color = vec4(colRmod + colDmod);
+
   gl_Position = ModelViewProjection * vPosition;
   }

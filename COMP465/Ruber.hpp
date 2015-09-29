@@ -126,10 +126,7 @@ public:
 		}
 	}
 
-	glm::vec3 getPosition(int i)
-	{
-		return glm:: vec3(translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2]);
-	}
+	
 
 	glm::mat4 getModelMatrix(int i) {
 		
