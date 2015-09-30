@@ -135,7 +135,7 @@ GLuint PR;  //handle
 glm::mat4 duoModelMat;
 GLuint PD;  //handle
 
-glm::vec4 ruberLightColor = glm::vec4(0.9f,0.9f,1.0f,1.0f);
+glm::vec4 ruberLightColor = glm::vec4(0.4f,0.5f,1.0f,1.0f);
 GLuint CR;  //handle
 GLuint CR2;  //handle
 
@@ -310,7 +310,7 @@ void display(void) {
 	{
 		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
-			glUseProgram(shaderProgram[0]);
+			glUseProgram(shaderProgram[1]); //1
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getTranslationMatrix(ia);
@@ -368,7 +368,7 @@ void display(void) {
 		}
 		else if (ia ==2)
 		{
-			glUseProgram(shaderProgram[0]);
+			glUseProgram(shaderProgram[1]); //1
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -425,7 +425,7 @@ void display(void) {
 		}
 		else if (ia == 4 || ia == 5 || ia == 1)
 		{
-			glUseProgram(shaderProgram[0]);
+			glUseProgram(shaderProgram[1]); //1
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -482,7 +482,7 @@ void display(void) {
 		}
 		else if (ia==3)//duo (a blue sun)
 		{
-			glUseProgram(shaderProgram[0]);
+			glUseProgram(shaderProgram[2]); //
 			glUniform4fv(CD2, 1, glm::value_ptr(duoLightColor));
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;

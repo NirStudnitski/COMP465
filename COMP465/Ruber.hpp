@@ -15,6 +15,14 @@ private:
 	glm::vec3 rotationAxisPitch;
 	glm::vec3 rotationAxisRoll;
 	glm::vec3 selfRotationAxis;
+
+	// for unum's eliptical orbit calculations
+	glm::vec3 velocity = glm::vec3(0.0f, 5.0f, 10.0f); //unum's initial velocity
+	float gravConst = 100.0f;
+	glm::vec3 gravity; //for unum
+	float distance;
+
+
 	float radians;
 	const int nNonAstObj = 7; // number of non-asteroid objects
 	bool orbit = true;
@@ -75,7 +83,7 @@ public:
 			case 1: //unum
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(100, 100, 100));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(0.5f);
+				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(800, 0.0f, 0.0f));
 				break;
@@ -157,10 +165,25 @@ public:
 		double sAmp = sin(t / 300);
 		double cAmp = cos(t / 300);
 		
-	
+	// this code makes unum's orbit eliptical, due to gravity from the sun
+		if (i == 1) //unum
+		{
+			distance = translationMatrix[3][0] * translationMatrix[3][0]
+				+ translationMatrix[3][1] * translationMatrix[3][1]
+				+ translationMatrix[3][2] * translationMatrix[3][2];
+			gravity = glm::vec3(-translationMatrix[3][0] *gravConst / distance, 
+				-translationMatrix[3][1] * gravConst / distance, 
+				-translationMatrix[3][2] * gravConst / distance );
+			velocity.x += gravity.x;
+			velocity.y += gravity.y;
+			velocity.z += gravity.z;
+			translationMatrix[3][0] += velocity.x ;
+			translationMatrix[3][1] += velocity.y;
+			translationMatrix[3][2] += velocity.z;
+		}
 
 		
-		if (i == 2) //warbird
+		else if (i == 2) //warbird
 		{
 			//roll and pitch
 			rotationAxisPitch = glm::vec3(translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2]);
