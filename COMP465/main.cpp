@@ -6,6 +6,8 @@
 #include <GL/glut.h>
 #include <stdio.h>
 
+//hello megan!
+
 // Shapes
 const int nAsteroids = 200;
 const int nNonAstObj = 7; // number of non-asteroid objects
