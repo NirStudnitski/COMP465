@@ -310,7 +310,7 @@ void display(void) {
 	{
 		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
-			glUseProgram(shaderProgram[1]);
+			glUseProgram(shaderProgram[0]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getTranslationMatrix(ia);
@@ -368,7 +368,7 @@ void display(void) {
 		}
 		else if (ia ==2)
 		{
-			glUseProgram(shaderProgram[1]);
+			glUseProgram(shaderProgram[0]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -425,7 +425,7 @@ void display(void) {
 		}
 		else if (ia == 4 || ia == 5 || ia == 1)
 		{
-			glUseProgram(shaderProgram[1]);
+			glUseProgram(shaderProgram[0]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -482,7 +482,7 @@ void display(void) {
 		}
 		else if (ia==3)//duo (a blue sun)
 		{
-			glUseProgram(shaderProgram[2]);
+			glUseProgram(shaderProgram[0]);
 			glUniform4fv(CD2, 1, glm::value_ptr(duoLightColor));
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
@@ -606,6 +606,24 @@ void update(int i) {
 		strcpy(viewStr, " cockpit View");
 		viewMatrix = glm::lookAt(eye, at, up);
 	 break;
+
+	case 4: //Unum view
+		behindShipView = shape[1]->getModelMatrix(1);
+		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 200.0f, behindShipView[3].z);
+		at = glm::vec3(-behindShipView[3].x, 0.0f, behindShipView[3].z);
+		up = glm::vec3(0.0f, 0.0f, -1.0f);
+		strcpy(viewStr, " Unum View");
+		viewMatrix = glm::lookAt(eye, at, up);
+		break;
+
+	case 5: //Duo view
+		behindShipView = shape[3]->getModelMatrix(3);
+		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 200.0f, behindShipView[3].z);
+		at = glm::vec3(behindShipView[3].x, 0.0f, behindShipView[3].z);
+		up = glm::vec3(0.0f, 0.0f, -1.0f);
+		strcpy(viewStr, " Duo View");
+		viewMatrix = glm::lookAt(eye, at, up);
+		break;
 }
 	
 }
@@ -643,6 +661,14 @@ void keyboard(unsigned char key, int x, int y) {
 	case '3':   // cockpit view
 		trackShip = 3;
 		break;
+
+	case '4':
+		trackShip = 4;
+		break;
+
+//	case '5':
+	//	trackShip = 5;
+	//	break;
 
 
 	case 'a': case 'A':  
