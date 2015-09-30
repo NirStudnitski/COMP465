@@ -22,7 +22,7 @@ const int nFacetsMissile = 252;
 
 const int nFacetsAsteroid = 118;
 const int nFacetsAsteroid2 = 82;
-const int nFacetsAsteroid3 = 16;
+const int nFacetsAsteroid3 = 32;
 const int nFacetsAsteroid4 = 20;
 const int nFacetsAsteroid5 = 20;
 
@@ -187,7 +187,7 @@ void init(void) {
 	//glUseProgram(0);
 	for (int i = 0; i < nModels; i++)
 	{
-		int shaderID= 0;
+		int shaderID= 1;
 		
 		if (i<=nNonAstObj) switch (i)
 		{
@@ -245,7 +245,7 @@ void init(void) {
 	dirD = glGetUniformLocation(shaderProgram[1], "posD");
 	
 	// initially use a front view
-	eye = glm::vec3(0.0f, 1000.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
+	eye = glm::vec3(0.0f, 800.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
 	at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
 	up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
 	viewMatrix = glm::lookAt(eye, at, up);
@@ -299,30 +299,35 @@ void display(void) {
 	// update model matrix, set MVP, draw
 	for (int ia = 0; ia < nModels; ia++) 
 	{
-		if (ia == 2)
+		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
 			glUseProgram(shaderProgram[1]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
-			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
+			rotationMatrix2 = shape[ia]->getTranslationMatrix(ia);
 			translationMatrix2 = shape[ia]->getTranslationMatrix(ia);
 			duoModelMat = shape[3]->getModelMatrix(3);
 
-			//distances to each sun squared
+			//distances to each sun (already squared)
 			distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
 				translationMatrix2[3][1] * translationMatrix2[3][1] +
 				translationMatrix2[3][2]*translationMatrix2[3][2];
+			distanceToR *= 0.25; //give ruber more intensity
 
 			distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
 				(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
 				(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
 
+			
+			// light intensity is proportional to the inverse sqare of distance
+			intensityR = (float) 1/ distanceToR;
+			intensityD = (float) 1/ distanceToD ;
+
 			//fractional intensity
-			float sum = (distanceToR + distanceToD)/3;
+			float sum = (intensityR + intensityD)/3;
 
-			intensityR = (float) distanceToR / sum;
-			intensityD = (float) distanceToD / sum;
-
+			intensityR = intensityR / sum;
+			intensityD = intensityD / sum;
 			//normalised pointer vectors to Ruber and Duo
 			R = normalize(glm:: vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
 			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], translationMatrix2[3][1] 
@@ -344,6 +349,63 @@ void display(void) {
 			glUniform1f(intensD, intensityD);
 			glUniform1f(intensR, intensityR);
 			
+			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
+			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
+			glBindVertexArray(vao[ia]);
+			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
+			else modelID = ia;
+			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+		}
+		else if (ia ==2)
+		{
+			glUseProgram(shaderProgram[1]);
+			modelMatrix = shape[ia]->getModelMatrix(ia);
+			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
+			translationMatrix2 = shape[ia]->getTranslationMatrix(ia);
+			duoModelMat = shape[3]->getModelMatrix(3);
+
+			//distances to each sun (already squared)
+			distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
+				translationMatrix2[3][1] * translationMatrix2[3][1] +
+				translationMatrix2[3][2] * translationMatrix2[3][2];
+			distanceToR *= 0.25; //give ruber more intensity
+
+			distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
+				(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
+				(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
+
+
+			// light intensity is proportional to the inverse sqare of distance
+			intensityR = (float)1 / distanceToR;
+			intensityD = (float)1 / distanceToD;
+
+			//fractional intensity
+			float sum = (intensityR + intensityD) / 3;
+
+			intensityR = intensityR / sum;
+			intensityD = intensityD / sum;
+			//normalised pointer vectors to Ruber and Duo
+			R = normalize(glm::vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
+			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], translationMatrix2[3][1]
+				- duoModelMat[3][1], translationMatrix2[3][2] - duoModelMat[3][2]));
+
+
+
+
+			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
+			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
+			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2));
+			glUniformMatrix4fv(PD, 1, GL_FALSE, glm::value_ptr(duoModelMat));
+			glUniform3fv(dirD, 1, glm::value_ptr(posD));
+			glUniform3fv(dirR, 1, glm::value_ptr(R));
+
+			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
+			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
+
+			glUniform1f(intensD, intensityD);
+			glUniform1f(intensR, intensityR);
+
 			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
 			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
 			glBindVertexArray(vao[ia]);
@@ -418,10 +480,10 @@ void update(int i) {
 	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch);
 	
 	 //die-down of roll and pitch
-	 if (pitch < 0) pitch += 0.001; //
-	 else if (pitch > 0) pitch -= 0.001; //
-	 if (roll < 0) roll += 0.001; //
-	 else if (roll > 0)roll -= 0.001; //
+	 if (pitch < 0) pitch += 0.001f; //
+	 else if (pitch > 0) pitch -= 0.001f; //
+	 if (roll < 0) roll += 0.001f; //
+	 else if (roll > 0)roll -= 0.001f; //
 	
 	 // camera tracks ship:
 	 if (trackShip!=0)

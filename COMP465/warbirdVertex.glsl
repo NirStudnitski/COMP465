@@ -49,7 +49,8 @@ intensity = intensity* intensityR;
 intensity2 = intensity2* intensityD;
 vec4 colRmod = vec4(colR.x * intensity, colR.y * intensity, colR.z * intensity, colR.w * intensity);
 vec4 colDmod = vec4(colD.x * intensity2, colD.y * intensity2, colD.z * intensity2, colD.w * intensity2);
- color = vec4(colRmod + colDmod);
+vec4 ambient = vec4(0.1f,0.1f,0.1f,0.1f);
+ color = vec4(colRmod + colDmod + ambient);
 
   gl_Position = ModelViewProjection * vPosition;
   }
