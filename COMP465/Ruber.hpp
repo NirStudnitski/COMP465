@@ -81,7 +81,7 @@ public:
 				break;
 
 			case 2: //warbird
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, -20));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, 20));
 				rotationAxis = glm::vec3(0, 0, 1);
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),

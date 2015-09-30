@@ -205,10 +205,10 @@ void init(void) {
 				shaderID = 0;
 				break;
 			case 4: //shader for Duo's moon
-				shaderID = 2;
+				shaderID = 1;
 				break;
 			case 5: //shader for Duo's moon
-				shaderID = 2;
+				shaderID = 1;
 				break;
 			case 6: //shader for missile
 				shaderID = 0;
@@ -356,7 +356,7 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia ==2)
+		else if (ia ==2|| ia == 4|| ia == 5)
 		{
 			glUseProgram(shaderProgram[1]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
@@ -494,7 +494,7 @@ void update(int i) {
 
 			 behindShipView = shape[2]->getModelMatrix(2);
 
-			 eye = glm::vec3(behindShipView[3][0], behindShipView[3][1] + 200, behindShipView[3][2] + 500);
+			 eye = glm::vec3(behindShipView[3][0], behindShipView[3][1] + 100, behindShipView[3][2] + 250);
 			 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
 			 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
 			 strcpy(viewStr, " Ship View");
@@ -506,7 +506,7 @@ void update(int i) {
 
 		 behindShipView = shape[2]->getModelMatrix(2);
 
-		 eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 10, behindShipView[3][1] - behindShipView[2][1] * 10, behindShipView[3][2] - behindShipView[2][2] * 10);
+		 eye = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 10, behindShipView[3][1] + behindShipView[2][1] * 10, behindShipView[3][2] + behindShipView[2][2] * 10);
 		 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
 		 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
 		 strcpy(viewStr, " behind Ship View");
@@ -518,8 +518,8 @@ void update(int i) {
 
 		behindShipView = shape[2]->getModelMatrix(2);
 
-		eye = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 3, behindShipView[3][1] + behindShipView[2][1] * 3, behindShipView[3][2] + behindShipView[2][2] * 3);
-		at = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 4, behindShipView[3][1] + behindShipView[2][1] * 4, behindShipView[3][2] + behindShipView[2][2] * 4);
+		eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 3, behindShipView[3][1] - behindShipView[2][1] * 3, behindShipView[3][2] - behindShipView[2][2] * 3);
+		at = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 4, behindShipView[3][1] - behindShipView[2][1] * 4, behindShipView[3][2] - behindShipView[2][2] * 4);
 		up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
 		strcpy(viewStr, " cockpit View");
 		viewMatrix = glm::lookAt(eye, at, up);
