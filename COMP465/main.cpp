@@ -26,10 +26,11 @@ const int nFacetsAsteroid3 = 32;
 const int nFacetsAsteroid4 = 20;
 const int nFacetsAsteroid5 = 20;
 
+float lightMitigator = 0.4;
 
 int trackShip = 0;
 
-glm::vec4 lightSource(1.0f, 1.0f, 0.0f,1.0f);
+
 
 
 
@@ -134,9 +135,11 @@ GLuint PD;  //handle
 
 glm::vec4 ruberLightColor = glm::vec4(0.9f,0.9f,1.0f,1.0f);
 GLuint CR;  //handle
+GLuint CR2;  //handle
 
-glm::vec4 duoLightColor = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f);
+glm::vec4 duoLightColor = glm::vec4(1.0f, 0.2f, 0.5f, 1.0f);
 GLuint CD;  //handle
+GLuint CD2;  //handle
 
 //distance to each sun - for intensity calculations
 float distanceToR;
@@ -195,14 +198,14 @@ void init(void) {
 				shaderID = 0;
 				break;
 			case 1: //shader for Unum
-				shaderID = 0;
+				shaderID = 1;
 				break;
 			case 2: //shader for Warbird
 				shaderID = 1;
 				
 				break;
 			case 3: //shader for Duo
-				shaderID = 0;
+				shaderID = 2;
 				break;
 			case 4: //shader for Duo's moon
 				shaderID = 1;
@@ -234,8 +237,12 @@ void init(void) {
 	TOT = glGetUniformLocation(shaderProgram[1], "translation");
 	PR = glGetUniformLocation(shaderProgram[1], "posR");
 	PD = glGetUniformLocation(shaderProgram[1], "transD");
+	CR2 = glGetUniformLocation(shaderProgram[0], "colR");
 	CR = glGetUniformLocation(shaderProgram[1], "colR");
+
 	CD = glGetUniformLocation(shaderProgram[1], "colD");
+	CD2 = glGetUniformLocation(shaderProgram[2], "colD");
+	
 
 	//these distances will passes squared( raisedto the power of 2)
 	intensD = glGetUniformLocation(shaderProgram[1], "intensityD");
@@ -312,7 +319,7 @@ void display(void) {
 			distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
 				translationMatrix2[3][1] * translationMatrix2[3][1] +
 				translationMatrix2[3][2]*translationMatrix2[3][2];
-			distanceToR *= 0.25; //give ruber more intensity
+			distanceToR *= lightMitigator; //give ruber more intensity
 
 			distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
 				(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
@@ -330,10 +337,11 @@ void display(void) {
 			intensityD = intensityD / sum;
 			//normalised pointer vectors to Ruber and Duo
 			R = normalize(glm:: vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
+			
 			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], translationMatrix2[3][1] 
 									- duoModelMat[3][1], translationMatrix2[3][2] - duoModelMat[3][2]));
 
-			
+			//posD = glm::vec3(posD.x*-1, posD.y*-1, posD.z*-1);
 
 
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
@@ -356,7 +364,7 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia ==2|| ia == 4|| ia == 5)
+		else if (ia ==2)
 		{
 			glUseProgram(shaderProgram[1]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
@@ -369,7 +377,7 @@ void display(void) {
 			distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
 				translationMatrix2[3][1] * translationMatrix2[3][1] +
 				translationMatrix2[3][2] * translationMatrix2[3][2];
-			distanceToR *= 0.25; //give ruber more intensity
+			distanceToR *= lightMitigator; //give ruber more intensity
 
 			distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
 				(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
@@ -413,14 +421,86 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else
+		else if (ia == 4 || ia == 5 || ia == 1)
 		{
-			glUseProgram(shaderProgram[0]);
+			glUseProgram(shaderProgram[1]);
+			modelMatrix = shape[ia]->getModelMatrix(ia);
+			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
+			translationMatrix2 = shape[ia]->getModelMatrix(ia);
+			duoModelMat = shape[3]->getModelMatrix(3);
+
+			//distances to each sun (already squared)
+			distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
+				translationMatrix2[3][1] * translationMatrix2[3][1] +
+				translationMatrix2[3][2] * translationMatrix2[3][2];
+			distanceToR *= lightMitigator; //give ruber more intensity
+
+			distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
+				(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
+				(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
+
+
+			// light intensity is proportional to the inverse sqare of distance
+			intensityR = (float)1 / distanceToR;
+			intensityD = (float)1 / distanceToD;
+
+			//fractional intensity
+			float sum = (intensityR + intensityD) / 3;
+
+			intensityR = intensityR / sum;
+			intensityD = intensityD / sum;
+			//normalised pointer vectors to Ruber and Duo
+			R = normalize(glm::vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
+			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], translationMatrix2[3][1]
+				- duoModelMat[3][1], translationMatrix2[3][2] - duoModelMat[3][2]));
+
+
+
+
+			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
+			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
+			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2));
+			glUniformMatrix4fv(PD, 1, GL_FALSE, glm::value_ptr(duoModelMat));
+			glUniform3fv(dirD, 1, glm::value_ptr(posD));
+			glUniform3fv(dirR, 1, glm::value_ptr(R));
+
+			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
+			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
+
+			glUniform1f(intensD, intensityD);
+			glUniform1f(intensR, intensityR);
+
+			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
+			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
+			glBindVertexArray(vao[ia]);
+			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
+			else modelID = ia;
+			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+		}
+		else if (ia==3)//duo (a blue sun)
+		{
+			glUseProgram(shaderProgram[2]);
+			glUniform4fv(CD2, 1, glm::value_ptr(duoLightColor));
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 			
+			glBindVertexArray(vao[ia]);
+			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
+			else modelID = ia;
+			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+		}
+		else
+		{
+			glUseProgram(shaderProgram[0]);
+			glUniform4fv(CR2, 1, glm::value_ptr(ruberLightColor));
+			modelMatrix = shape[ia]->getModelMatrix(ia);
+			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+
+			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
+
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
@@ -489,7 +569,7 @@ void update(int i) {
 	 if (trackShip!=0)
 		 switch(trackShip)
 	 {
-		 case 1:
+		 case 1: //warbird view
 		 
 
 			 behindShipView = shape[2]->getModelMatrix(2);
@@ -502,7 +582,7 @@ void update(int i) {
 		  break;
 	case 2: //behind ship view
 	 
-
+		 
 
 		 behindShipView = shape[2]->getModelMatrix(2);
 

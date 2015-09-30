@@ -67,7 +67,7 @@ public:
 		{
 			switch (number) {
 			case 0: //ruber
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(400, 400, 400));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(300, 300, 300));
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(-20.0f);
 				break;
