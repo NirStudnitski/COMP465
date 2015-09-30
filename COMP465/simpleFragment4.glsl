@@ -9,11 +9,11 @@ Mike Barnes
 
 # version 330 core
 
-in vec4 colorWB; 
+in vec4 color; 
 out vec4 fragColor;
 
 void main() {
 
-  fragColor = colorWB;
+  fragColor = color;
   }
 

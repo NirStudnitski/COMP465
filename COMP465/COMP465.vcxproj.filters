@@ -49,5 +49,11 @@
     <None Include="warbirdVertex.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="simpleFragment4.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="simpleVertex4.glsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

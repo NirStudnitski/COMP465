@@ -132,7 +132,9 @@
     <None Include="missile.tri" />
     <None Include="simpleFragment.glsl" />
     <None Include="simpleFragment3.glsl" />
+    <None Include="simpleFragment4.glsl" />
     <None Include="simpleVertex.glsl" />
+    <None Include="simpleVertex4.glsl" />
     <None Include="warbirdVertex.glsl" />
     <None Include="simpleVertex3.glsl" />
     <None Include="warbirdFragment.glsl" />

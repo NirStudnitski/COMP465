@@ -100,7 +100,7 @@ public:
 			case 3: //Duo
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(60, 60, 60));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(0.30f);
+				radians = glm::radians(4.30f);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1200, 0.0f, 0.0f));
 				break;
