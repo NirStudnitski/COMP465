@@ -89,6 +89,42 @@ void main() {
 			vec4 colDSpec = vec4(colD.x * intensitySpec2, colD.y * intensitySpec2, colD.z * intensitySpec2, 1.0f);
 			vec4 ambient = vec4(0.1f,0.1f,0.1f,0.1f);
 			color = vec4(colDSpec + colRSpec +colRmod + colDmod);
+			
+			// add specular lighting six times, for the six aidditional light poitns of ruber
+			
+			vec3 bla[6]; 
+			bla[0] = vec3(0.0f,0.0f,300f);
+			bla[1] = vec3(0.0f,0.0f,-300f);
+			bla[2] = vec3(0.0f,300.0f,0.0f);
+			bla[3] = vec3(0.0f,-300.0f,0.0f);
+			bla[4] = vec3(300.0f,0.0f,0.0f);
+			bla[5] = vec3(-300.0f,0.0f,0.0f);
+			
+
+			for (int i=0;i<6;i++)
+			{
+			   
+					
+					 vec3 ruber2 = normalize vec3( bla[i].x-translation[3][0],
+												bla[i].y-translation[3][1],
+												bla[i].z-translation[3][2]);
+					
+				
+				
+				
+				vec3 R2 = normalize vec3(R+ruber2);
+				vec3 LR2 = normalize vec3(R2+view);
+			
+				//specular lighting
+				float intensitySpecB =  pow(dot(LR2,N), 1)*intensityR*0.0001f;
+				//if (intensitySpec<0) intensitySpec*=-1;
+			
+
+				//specular
+				vec4 colRSpecB = vec4(colR.x * intensitySpecB, colR.y * intensitySpecB, colR.z * intensitySpecB, 0.0f);
+		
+				color = color + colRSpecB;
+			}
  
 			
 			  gl_Position = ModelViewProjection * vPosition;
