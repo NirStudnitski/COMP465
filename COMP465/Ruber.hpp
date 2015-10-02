@@ -16,6 +16,7 @@ private:
 	glm::vec3 rotationAxisRoll;
 	glm::vec3 selfRotationAxis;
 
+
 	// for unum's eliptical orbit calculations
 	glm::vec3 velocity = glm::vec3(0.0f, 5.0f, 10.0f); //unum's initial velocity
 	float gravConst = 100.0f;
@@ -24,6 +25,7 @@ private:
 
 
 	float radians;
+	float radiansD = 0.5f; //radians for duo
 	const int nNonAstObj = 7; // number of non-asteroid objects
 	bool orbit = true;
 	
@@ -37,7 +39,6 @@ public:
 	ruber(int number, int nAst) {
 		id = number;  
 		int random = rand()%200; 
-		
 		float randomf = rand() / 1000;
 
 		rotationMatrix = glm::mat4();  
@@ -93,14 +94,14 @@ public:
 				rotationAxis = glm::vec3(0, 0, 1);
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 400.0, 1400.0f));
+					glm::vec3(0, 500.0, 1600.0f));
 				orbit = false;
 				break;
 
 			case 3: //Duo
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(60, 60, 60));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(4.30f);
+				radians = glm::radians(radiansD);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1200, 0.0f, 0.0f));
 				break;
@@ -108,7 +109,7 @@ public:
 			case 4: //Duo's outer moon - suspended between duo and ruber
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(40, 40, 40));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(0.30f);
+				radians = glm::radians(radiansD);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1100, 0.0f, 0.0f));
 				break;
@@ -116,7 +117,7 @@ public:
 			case 5: //Duo's moon orbiting duo
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(0.30f);
+				radians = glm::radians(radiansD);
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(1000, 0.0f, 0.0f));
 				break;

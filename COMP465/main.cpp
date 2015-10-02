@@ -1,12 +1,20 @@
+/* 
+Warbird Simulation - Phase 1
+
+Comp 465
+
+Team Members:
+Nir Studnitski
+Megan Kim
+*/
+
 # define __Windows__ // define your target operating system
 # include "../includes465/include465.hpp" 
 # include <fstream>
 
 # include "Ruber.hpp"
-#include <GL/glut.h>
-#include <stdio.h>
-
-//hello megan!
+# include <GL/glut.h>
+# include <stdio.h>
 
 // Shapes
 const int nAsteroids = 200;
@@ -292,7 +300,7 @@ void init(void) {
 
 	// set render state values
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
@@ -647,8 +655,8 @@ void update(int i) {
 
 	case 4: //Unum view
 		behindShipView = shape[1]->getModelMatrix(1);
-		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 200.0f, behindShipView[3].z);
-		at = glm::vec3(-behindShipView[3].x, 0.0f, behindShipView[3].z);
+		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 400.0f, behindShipView[3].z);
+		at = glm::vec3(behindShipView[3].x, 0.0f, behindShipView[3].z);
 		up = glm::vec3(0.0f, 0.0f, -1.0f);
 		strcpy(viewStr, " Unum View");
 		viewMatrix = glm::lookAt(eye, at, up);
@@ -656,7 +664,7 @@ void update(int i) {
 
 	case 5: //Duo view
 		behindShipView = shape[3]->getModelMatrix(3);
-		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 200.0f, behindShipView[3].z);
+		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 400.0f, behindShipView[3].z);
 		at = glm::vec3(behindShipView[3].x, 0.0f, behindShipView[3].z);
 		up = glm::vec3(0.0f, 0.0f, -1.0f);
 		strcpy(viewStr, " Duo View");
@@ -704,10 +712,9 @@ void keyboard(unsigned char key, int x, int y) {
 		trackShip = 4;
 		break;
 
-//	case '5':
-	//	trackShip = 5;
-	//	break;
-
+	case '5':
+		trackShip = 5;
+		break;
 
 	case 'a': case 'A':  
 		thrust+= 1.0f;
