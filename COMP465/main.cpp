@@ -117,9 +117,9 @@ GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
 GLuint vao[nModels];  // VertexArrayObject
 GLuint buffer[nModels];
-GLuint shaderProgram[3];
-char * vertexShaderFile[4] = { "simpleVertex.glsl", "warbirdVertex.glsl" , "simpleVertex3.glsl" , "simpleVertex4.glsl" };
-char * fragmentShaderFile[4] = {"simpleFragment.glsl", "warbirdFragment.glsl", "simpleFragment3.glsl", "simpleFragment4.glsl" };
+GLuint shaderProgram[1];
+char * vertexShaderFile[1] = { "simpleVertex.glsl" };
+char * fragmentShaderFile[1] = {"simpleFragment.glsl" };
 GLuint MVP;  // Model View Projection matrix's handle
 GLuint ROT;  // rotation matrix's handle
 GLuint TOT;  // tanslationMatrix2's handle
@@ -132,8 +132,6 @@ glm::mat4 behindShipView; // to be used in seeing behind the warbird
 //uniform variables to be passed to shader
 glm::mat4 rotationMatrix2;
 glm::mat4 translationMatrix2;
-
-
 
 
 //two suns: ruber and duo******************************************
@@ -187,7 +185,8 @@ GLuint VV;
 
 									 // vectors and values for lookAt
 glm::vec3 eye, at, up;
-
+GLuint shaderID;
+GLuint shaderHandle;
 
 // rotation variables
 glm::mat4 identity(1.0f);
@@ -199,8 +198,8 @@ double currentTime, lastTime, timeInterval;
 void init(void) {
 	
 
-	for (int i = 0; i < 4; i++) 
-		shaderProgram[i] = loadShaders(vertexShaderFile[i], fragmentShaderFile[i]);
+	
+		shaderProgram[0] = loadShaders(vertexShaderFile[0], fragmentShaderFile[0]);
 	
 
 	glGenVertexArrays(nModels, vao);
@@ -214,7 +213,7 @@ void init(void) {
 	//glUseProgram(0);
 	for (int i = 0; i < nModels; i++)
 	{
-		int shaderID= 3;
+		shaderID= 0;
 		
 		if (i<=nNonAstObj) switch (i)
 		{
@@ -222,20 +221,20 @@ void init(void) {
 				shaderID = 0;
 				break;
 			case 1: //shader for Unum
-				shaderID = 3;
+				shaderID = 0;
 				break;
 			case 2: //shader for Warbird
-				shaderID = 1;
+				shaderID = 0;
 				
 				break;
 			case 3: //shader for Duo
-				shaderID = 2;
+				shaderID = 0;
 				break;
 			case 4: //shader for Duo's moon
-				shaderID = 3;
+				shaderID = 0;
 				break;
 			case 5: //shader for Duo's moon
-				shaderID = 3;
+				shaderID = 0;
 				break;
 			case 6: //shader for missile
 				shaderID = 0;
@@ -257,40 +256,28 @@ void init(void) {
 	}
 	
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
-	ROT = glGetUniformLocation(shaderProgram[1], "rotation");
-	TOT = glGetUniformLocation(shaderProgram[1], "translation");
-	PR = glGetUniformLocation(shaderProgram[1], "posR");
-	PD = glGetUniformLocation(shaderProgram[1], "transD");
-	CR2 = glGetUniformLocation(shaderProgram[0], "colR");
-	CR = glGetUniformLocation(shaderProgram[1], "colR");
-
-	CD = glGetUniformLocation(shaderProgram[1], "colD");
-	CD2 = glGetUniformLocation(shaderProgram[2], "colD");
+	ROT = glGetUniformLocation(shaderProgram[0], "rotation");
+	TOT = glGetUniformLocation(shaderProgram[0], "translation");
+	PR = glGetUniformLocation(shaderProgram[0], "posR");
+	PD = glGetUniformLocation(shaderProgram[0], "transD");
+	//CR2 = glGetUniformLocation(shaderProgram[0], "colR");
+	CR = glGetUniformLocation(shaderProgram[0], "colR");
+	shaderHandle = glGetUniformLocation(shaderProgram[0], "shaderNumber");
+	CD = glGetUniformLocation(shaderProgram[0], "colD");
+	//CD2 = glGetUniformLocation(shaderProgram[2], "colD");
 	
 
 	//these distances will passes squared( raisedto the power of 2)
-	intensD = glGetUniformLocation(shaderProgram[1], "intensityD");
-	intensR = glGetUniformLocation(shaderProgram[1], "intensityR");
+	intensD = glGetUniformLocation(shaderProgram[0], "intensityD");
+	intensR = glGetUniformLocation(shaderProgram[0], "intensityR");
 	
-	dirR = glGetUniformLocation(shaderProgram[1], "R");
-	dirD = glGetUniformLocation(shaderProgram[1], "posD");
-	VV = glGetUniformLocation(shaderProgram[1], "view");
+	dirR = glGetUniformLocation(shaderProgram[0], "R");
+	dirD = glGetUniformLocation(shaderProgram[0], "posD");
+	VV = glGetUniformLocation(shaderProgram[0], "view");
 
-	PR4 = glGetUniformLocation(shaderProgram[3], "posR");
-	PD4 = glGetUniformLocation(shaderProgram[3], "transD");
-	CR4 = glGetUniformLocation(shaderProgram[3], "colR");
-	
-
-	CD4 = glGetUniformLocation(shaderProgram[3], "colD");
 	
 
 
-	//these distances will passes squared( raisedto the power of 2)
-	intensD4 = glGetUniformLocation(shaderProgram[3], "intensityD");
-	intensR4 = glGetUniformLocation(shaderProgram[3], "intensityR");
-
-	dirR4 = glGetUniformLocation(shaderProgram[3], "R");
-	dirD4 = glGetUniformLocation(shaderProgram[3], "posD");
 	
 	// initially use a front view
 	eye = glm::vec3(0.0f, 800.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
@@ -349,7 +336,7 @@ void display(void) {
 	{
 		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
-			glUseProgram(shaderProgram[3]); //3
+			glUseProgram(shaderProgram[0]); //3
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getTranslationMatrix(ia);
@@ -392,15 +379,17 @@ void display(void) {
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
 			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2)); 
-			glUniformMatrix4fv(PD4, 1, GL_FALSE, glm::value_ptr(duoModelMat));
-			glUniform3fv(dirD4, 1, glm::value_ptr(posD));
-			glUniform3fv(dirR4, 1, glm::value_ptr(R));
+			glUniformMatrix4fv(PD, 1, GL_FALSE, glm::value_ptr(duoModelMat));
+			glUniform3fv(dirD, 1, glm::value_ptr(posD));
+			glUniform3fv(dirR, 1, glm::value_ptr(R));
 
-			glUniform4fv(CR4, 1, glm::value_ptr(ruberLightColor));
-			glUniform4fv(CD4, 1, glm::value_ptr(duoLightColor));
-
-			glUniform1f(intensD4, intensityD);
-			glUniform1f(intensR4, intensityR);
+			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
+			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
+			shaderID = 3;
+			glUniform1i(shaderHandle, shaderID);
+			glUniform1f(intensD, intensityD);
+			glUniform1i(shaderHandle, shaderID);
+			glUniform1f(intensR, intensityR);
 			
 			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
 			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
@@ -409,9 +398,9 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia ==2)
+		else if (ia ==2) //warbird
 		{
-			glUseProgram(shaderProgram[1]); //1
+			glUseProgram(shaderProgram[0]); //1
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -456,7 +445,8 @@ void display(void) {
 			glUniform3fv(dirD, 1, glm::value_ptr(posD));
 			glUniform3fv(dirR, 1, glm::value_ptr(R));
 			glUniform3fv(VV, 1, glm::value_ptr(viewVec));
-
+			shaderID = 2;
+			glUniform1i(shaderHandle, shaderID);
 			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
 			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
 
@@ -472,7 +462,7 @@ void display(void) {
 		}
 		else if (ia == 4 || ia == 5 || ia == 1)
 		{
-			glUseProgram(shaderProgram[3]); //3
+			glUseProgram(shaderProgram[0]); 
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -510,15 +500,16 @@ void display(void) {
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
 			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2));
-			glUniformMatrix4fv(PD4, 1, GL_FALSE, glm::value_ptr(duoModelMat));
-			glUniform3fv(dirD4, 1, glm::value_ptr(posD));
-			glUniform3fv(dirR4, 1, glm::value_ptr(R));
+			glUniformMatrix4fv(PD, 1, GL_FALSE, glm::value_ptr(duoModelMat));
+			glUniform3fv(dirD, 1, glm::value_ptr(posD));
+			glUniform3fv(dirR, 1, glm::value_ptr(R));
+			shaderID = 3;
+			glUniform1i(shaderHandle, shaderID);
+			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
+			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
 
-			glUniform4fv(CR4, 1, glm::value_ptr(ruberLightColor));
-			glUniform4fv(CD4, 1, glm::value_ptr(duoLightColor));
-
-			glUniform1f(intensD4, intensityD);
-			glUniform1f(intensR4, intensityR);
+			glUniform1f(intensD, intensityD);
+			glUniform1f(intensR, intensityR);
 
 			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
 			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
@@ -528,27 +519,29 @@ void display(void) {
 		}
 		else if (ia==3)//duo (a blue sun)
 		{
-			glUseProgram(shaderProgram[2]); //
-			glUniform4fv(CD2, 1, glm::value_ptr(duoLightColor));
+			glUseProgram(shaderProgram[0]); //
+			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
-			
+			shaderID = 1;
+			glUniform1i(shaderHandle, shaderID);
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else
+		else //ruber
 		{
 			glUseProgram(shaderProgram[0]);
-			glUniform4fv(CR2, 1, glm::value_ptr(ruberLightColor));
+			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
-
+			shaderID = 0;
+			glUniform1i(shaderHandle, shaderID);
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
