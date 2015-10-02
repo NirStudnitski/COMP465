@@ -38,11 +38,7 @@ const int nFacetsAsteroid5 = 20;
 
 float lightMitigator = 0.4;
 
-int trackShip = 0;
-
-
-
-
+int trackShip = 6;
 
 int modelID; // to be used in vertex, shader and and other arrays
 /*  0 = ruber
@@ -135,7 +131,9 @@ glm::mat4 translationMatrix2;
 
 
 //two suns: ruber and duo******************************************
-glm::vec3 ruberPos = glm::vec3(0.0f, 0.0f, 0.0f); //position
+
+//ruber is made up of 7 light points inside its sphere
+glm::vec3 ruberPos = 	glm::vec3(0.0f, 0.0f, 0.0f); //position
 GLuint PR;  //handle
 
 
@@ -183,7 +181,7 @@ GLuint VV;
 
 									 // vectors and values for lookAt
 glm::vec3 eye, at, up;
-GLuint shaderID;
+GLuint shaderID=0;
 GLuint shaderHandle;
 
 // rotation variables
@@ -229,13 +227,17 @@ void init(void) {
 	MVP = glGetUniformLocation(shaderProgram[0], "ModelViewProjection");
 	ROT = glGetUniformLocation(shaderProgram[0], "rotation");
 	TOT = glGetUniformLocation(shaderProgram[0], "translation");
+
+	//ruber's seven light points
 	PR = glGetUniformLocation(shaderProgram[0], "posR");
+	
+
 	PD = glGetUniformLocation(shaderProgram[0], "transD");
-	//CR2 = glGetUniformLocation(shaderProgram[0], "colR");
+
 	CR = glGetUniformLocation(shaderProgram[0], "colR");
 	shaderHandle = glGetUniformLocation(shaderProgram[0], "shaderNumber");
 	CD = glGetUniformLocation(shaderProgram[0], "colD");
-	//CD2 = glGetUniformLocation(shaderProgram[2], "colD");
+	
 	
 
 	//these distances will passes squared( raisedto the power of 2)
@@ -250,11 +252,7 @@ void init(void) {
 
 
 	
-	// initially use a front view
-	eye = glm::vec3(0.0f, 800.0f, 2000.0f);   // eye is 1000 "out of screen" from origin
-	at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
-	up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
-	viewMatrix = glm::lookAt(eye, at, up);
+	
 
 	// set render state values
 	glEnable(GL_DEPTH_TEST);
@@ -578,7 +576,7 @@ void update(int i) {
 	 else if (roll > 0)roll -= 0.001f; //
 	
 	 // camera tracks ship:
-	 if (trackShip!=0)
+	
 		 switch(trackShip)
 	 {
 		 case 1: //warbird view
@@ -634,6 +632,39 @@ void update(int i) {
 		strcpy(viewStr, " Duo View");
 		viewMatrix = glm::lookAt(eye, at, up);
 		break;
+
+	case 6: //initial
+		// initially use a front view
+		eye = glm::vec3(0.0f, 800.0f, 2000.0f);  
+		at = glm::vec3(0.0f, 0.0f, 0.0f);  
+		up = glm::vec3(0.0f, 1.0f, 0.0f);  
+		viewMatrix = glm::lookAt(eye, at, up);
+		strcpy(viewStr, " initial view");
+		break;
+
+	case 7:
+		eye = glm::vec3(0.0f, 500.0f, 2000.0f);  
+		at = glm::vec3(0.0f, 0.0f, 0.0f);  
+		up = glm::vec3(0.0f, 1.0f, 0.0f);  
+		viewMatrix = glm::lookAt(eye, at, up);
+		strcpy(viewStr, " front view");
+		break;
+
+	case 8:
+		eye = glm::vec3(1000.0f, 250.0f, 0.0f);   
+		at = glm::vec3(0.0f, 0.0f, 0.0f);   
+		up = glm::vec3(0.0f, 1.0f, 0.0f);   
+		viewMatrix = glm::lookAt(eye, at, up);
+		strcpy(viewStr, " right view");
+		break;
+
+	case 9:
+		eye = glm::vec3(0.0f, 3000.0f, 0.0f);  
+		at = glm::vec3(0.0f, 0.0f, 0.0f);     
+		up = glm::vec3(0.0f, 0.0f, -1.0f);   
+		strcpy(viewStr, " top view");
+		viewMatrix = glm::lookAt(eye, at, up);
+		break;
 }
 	
 }
@@ -644,23 +675,20 @@ void keyboard(unsigned char key, int x, int y) {
 	switch (key) {
 	case 033: case 'q':  case 'Q': exit(EXIT_SUCCESS); break;
 	case 'f': case 'F':  // front view
-		trackShip = 0;
-		eye = glm::vec3(0.0f, 500.0f, 2000.0f);   // eye is 2000 "out of screen" from origin
-		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
-		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
-		strcpy(viewStr, " front view"); break;
+		trackShip = 7;
+		 break;
 	case 'r': case 'R':
-		trackShip = 0;
-		eye = glm::vec3(1000.0f, 250.0f, 0.0f);   // eye is 1000 right from origin
-		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin
-		up = glm::vec3(0.0f, 1.0f, 0.0f);   // camera'a up vector
-		strcpy(viewStr, " right view"); break;
+		trackShip = 8;
+		 break;
 	case 't': case 'T':  // top view
-		trackShip = 0;
-		eye = glm::vec3(0.0f, 3000.0f, 0.0f);   // eye is 3000 up from origin
-		at = glm::vec3(0.0f, 0.0f, 0.0f);   // looking at origin  
-		up = glm::vec3(0.0f, 0.0f, -1.0f);   // camera's up is looking towards -Z vector
-		strcpy(viewStr, " top view"); break;
+		trackShip = 9;
+		 break;
+
+		
+	case 'v': case 'V':  // toggle view
+		if (trackShip!=9) trackShip++;
+		else trackShip = 1;
+		break;
 	case '1':   // follow ship view
 		trackShip = 1;
 		 break;
