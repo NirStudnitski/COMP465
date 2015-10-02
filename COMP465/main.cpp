@@ -137,21 +137,19 @@ glm::mat4 translationMatrix2;
 //two suns: ruber and duo******************************************
 glm::vec3 ruberPos = glm::vec3(0.0f, 0.0f, 0.0f); //position
 GLuint PR;  //handle
-GLuint PR4;  //handle
+
 
 glm::mat4 duoModelMat;
 GLuint PD;  //handle
-GLuint PD4;  //handle
+
 
 glm::vec4 ruberLightColor = glm::vec4(0.4f,0.5f,1.0f,1.0f);
 GLuint CR;  //handle
-GLuint CR2;  //handle
-GLuint CR4;  //handle
+
 
 glm::vec4 duoLightColor = glm::vec4(1.0f, 0.2f, 0.5f, 1.0f);
 GLuint CD;  //handle
-GLuint CD2;  //handle
-GLuint CD4;  //handle
+
 
 //distance to each sun - for intensity calculations
 float distanceToR;
@@ -160,20 +158,20 @@ float distanceToD;
 //fractional intensity of each sun
 float intensityR;
 GLuint intensR;
-GLuint intensR4;
+
 
 float intensityD;
 GLuint intensD;
-GLuint intensD4;
+
 
 // normalized pointers to the suns' direction
 glm::vec3 R;
 GLuint dirR;
-GLuint dirR4;
+
 
 glm::vec3 posD;
 GLuint dirD;
-GLuint dirD4;
+
 
 // normalized pointers to the camera's direction
 glm::vec3 viewVec;
@@ -213,34 +211,7 @@ void init(void) {
 	//glUseProgram(0);
 	for (int i = 0; i < nModels; i++)
 	{
-		shaderID= 0;
 		
-		if (i<=nNonAstObj) switch (i)
-		{
-			case 0: //shader for ruber
-				shaderID = 0;
-				break;
-			case 1: //shader for Unum
-				shaderID = 0;
-				break;
-			case 2: //shader for Warbird
-				shaderID = 0;
-				
-				break;
-			case 3: //shader for Duo
-				shaderID = 0;
-				break;
-			case 4: //shader for Duo's moon
-				shaderID = 0;
-				break;
-			case 5: //shader for Duo's moon
-				shaderID = 0;
-				break;
-			case 6: //shader for missile
-				shaderID = 0;
-				break; 
-			
-		}
 		
 		//assign the correct modelID
 		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
