@@ -104,7 +104,13 @@ glm::vec4 vertex[];
 glm::vec3 normal[];
 glm::vec4 diffuseColorMaterial[];
  
+
+//locations informations send to update
+glm::mat4 warBTrans = glm::mat4();
+glm::mat4 missileSiteTrans = glm::mat4();
 glm::mat4 unumTrans = glm::mat4();
+
+
 float boundingRadius[nModels];  
 int Index = 0;  // global variable indexing into VBO arrays
 
@@ -611,13 +617,16 @@ void display(void) {
 void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
+	
+	//update locations to be sent to update
+	unumTrans = shape[1]->getTranslationMatrix(1);
+	missileSiteTrans = shape[7]->getTranslationMatrix(7);
+	warBTrans = shape[2]->getTranslationMatrix(2);
+	
 	for (int i = 0; i < nModels; i++)
-	{
-		
-		if (i == 7) unumTrans = shape[1]->getTranslationMatrix(1);
-		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans);
+		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans);
 
-	}
+	
 	 //die-down of roll and pitch
 	 if (pitch < 0)
 	 {

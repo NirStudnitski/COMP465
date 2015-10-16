@@ -21,8 +21,12 @@ private:
 
 	// for unum's eliptical orbit calculations
 	glm::vec3 velocity = glm::vec3(0.0f, 5.0f, 10.0f); //unum's initial velocity
+	glm::vec3 mVelocity = glm::vec3(0.0f, 0.0f, 0.0f); //missile direction
+	
 	float gravConst = 100.0f;
+	float missileForceConst = 1.0f; //how quickly the missile updates its direction
 	glm::vec3 gravity; //for unum
+	glm::vec3 forceOnMissile;
 	float distance;
 
 
@@ -175,7 +179,9 @@ public:
 
 	}
 
-	void update(int i, double t, int nAst, float roll, float thrust, float pitch, glm::mat4 unumTrans) {
+	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 
+				glm::mat4 unumTrans, glm::mat4 missileSiteTrans, glm::mat4 warBTrans) 
+	{
 
 		
 
@@ -221,7 +227,41 @@ public:
 
 		if (i == 6 ) // missile
 		{
-			return;
+			if (t < 2000)
+			{
+				forceOnMissile = glm::vec3(0, 0, -1.0f);
+				mVelocity += forceOnMissile;
+
+				translationMatrix[3][0] += mVelocity.x;
+				translationMatrix[3][1] += mVelocity.y;
+				translationMatrix[3][2] += mVelocity.z;
+			}
+			else if (t<20000)
+			{
+				//missile experience a constant force guiding them towards the missile site. guidance kicks in after t>2000 
+				glm::vec3 helper = glm::normalize(glm::vec3((missileSiteTrans[3][0] - translationMatrix[3][0]),
+					(missileSiteTrans[3][1] - translationMatrix[3][1]),
+					(missileSiteTrans[3][2] - translationMatrix[3][2])));
+				forceOnMissile = helper * missileForceConst;
+
+				
+				
+				mVelocity += forceOnMissile;
+
+				translationMatrix[3][0] += mVelocity.x;
+				translationMatrix[3][1] += mVelocity.y;
+				translationMatrix[3][2] += mVelocity.z;
+
+				glm::vec3 direction = -glm::normalize(forceOnMissile);
+				translationMatrix[2][0] =direction.x;
+				translationMatrix[2][1] = direction.y;
+				translationMatrix[2][2] = direction.z;
+				
+			}
+			else 
+			{
+				//return to hidden location
+			}
 		}
 		if (i == 7) // missile site for unum
 		{
