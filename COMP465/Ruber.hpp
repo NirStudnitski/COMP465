@@ -177,9 +177,7 @@ public:
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, glm::mat4 unumTrans) {
 
-		// for the moons' orbit around duo
-		double sAmp = sin(t / 300);
-		double cAmp = cos(t / 300);
+		
 
 		// this code makes unum's orbit eliptical, due to gravity from the sun
 		if (i == 1 ) //unum
@@ -212,8 +210,11 @@ public:
 				translationMatrix[3][i] -= rotationMatrix[2][i] * thrust;
 		}
 		else if (i == 4) // moon orbiting duo
+		{
+			double sAmp = sin(t / 300);
+			double cAmp = cos(t / 300);
 			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 100 * sAmp, 0.0f, 100 * cAmp));
-
+		}
 
 		else if (i >= nNonAstObj && i < nNonAstObj + nAst) // ateroids rotation around center
 			translationMatrix = glm::rotate(translationMatrix, radians * 20, selfRotationAxis);
@@ -224,9 +225,16 @@ public:
 		}
 		if (i == 7) // missile site for unum
 		{
+			float angle = t / 3000.0f;
+			double sAmp = sin(angle);
+			double cAmp = cos(angle);
 			translationMatrix = unumTrans;
-			translationMatrix[3][0] += 100;
+			
 			translationMatrix = glm::rotate(translationMatrix, -1.57f, glm::vec3(0,0,1));
+			translationMatrix = glm::rotate(translationMatrix, angle, glm::vec3(1, 0, 0));
+			translationMatrix[3][0] += 100 * cAmp;
+			translationMatrix[3][2] += 100 * sAmp;
+			
 
 			
 		}
