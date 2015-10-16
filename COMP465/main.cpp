@@ -23,7 +23,7 @@ const int nModels = nNonAstObj + nAsteroids;
 
 float roll = 0; //left and right keys
 float thrust = 0; // 'a' for more thrust, 'z' for less
-float pitch = 0; //up and down keys
+float pitch = -0.025f; //up and down keys
 
 const int nFacets = 4416;
 const int nFacetsWB = 4245;
@@ -36,7 +36,7 @@ const int nFacetsAsteroid3 = 32;
 const int nFacetsAsteroid4 = 20;
 const int nFacetsAsteroid5 = 20;
 
-float lightMitigator = 0.4;
+float lightMitigator = 0.4f;
 
 int trackShip = 6;
 
@@ -56,7 +56,7 @@ int modelID; // to be used in vertex, shader and and other arrays
 */
 
 ruber * shape[nModels];
-char * speedS = "bla";
+char * speedS = "blalalalaCCCCC";
 
 // Model for shapes
 char * modelFile[] = 
@@ -128,8 +128,8 @@ glm::mat4 behindShipView; // to be used in seeing behind the warbird
 //uniform variables to be passed to shader
 glm::mat4 rotationMatrix2;
 glm::mat4 translationMatrix2;
-
-
+int windowWidth = 1600;
+int windowHeight = 800;
 //two suns: ruber and duo******************************************
 
 //ruber is made up of 7 light points inside its sphere
@@ -190,7 +190,34 @@ glm::mat4 rotation;
 int timerDelay = 40, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
 double currentTime, lastTime, timeInterval;
 
+void
+bitmap_output(int x, int y, char *string, void *font)
+{
+	int len, i;
 
+	glRasterPos2f(x, y);
+	len = (int)strlen(string);
+	for (i = 0; i < len; i++) {
+		glutBitmapCharacter(font, string[i]);
+	}
+}
+
+void
+stroke_output(GLfloat x, GLfloat y, char *format, ...)
+{
+	va_list args;
+	char buffer[200], *p;
+
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	glScalef(0.005, 0.005, 0.005);
+	for (p = buffer; *p; p++)
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, *p);
+	glPopMatrix();
+}
 void init(void) {
 	
 
@@ -256,28 +283,25 @@ void init(void) {
 
 	// set render state values
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
 	
 
 	lastTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
+
 }
 
-void reshape(int width, int height) {
-	glViewport(0, 0, width, height);
-	projectionMatrix = glm::perspective(glm::radians(45.0f), (GLfloat)width / (GLfloat)height, 1.0f, 10000.0f);
+void reshape(int w, int h) {
+	glViewport(0, 0, w, h);
+	projectionMatrix = glm::perspective(glm::radians(45.0f), (GLfloat)w / (GLfloat)h, 1.0f, 10000.0f);
+	
+	 
+	
 }
 
-// update and display animation state in window title
-void updateTitle() {
-	strcpy(titleStr, baseStr);
-	strcat(titleStr, viewStr);
-	strcat(titleStr, fpsStr);
-	// printf("title string = %s \n", titleStr);
-	glutSetWindowTitle(titleStr);
-}
+
 
 void drawString(void * font, char *s) {
 	unsigned int i;
@@ -286,7 +310,7 @@ void drawString(void * font, char *s) {
 
 
 	for (i = 0; i < strlen(s); i++)
-		glutBitmapCharacter(font, s[i]);
+		glutBitmapCharacter(font, (int) s[i]);
 }
 
 
@@ -297,7 +321,7 @@ void drawString(void * font, char *s) {
 
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	
 
 	// update model matrix, set MVP, draw
@@ -519,24 +543,31 @@ void display(void) {
 	}
 	
 	// text on screen - desn't work yet
-	/*
+	
 	glDisable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
 	
-	gluOrtho2D(0.0, 800, 0.0, 500);
+	glOrtho(0, windowWidth, 0, windowHeight, -5,5);
 	
 	
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
 	
-	glRasterPos2i(10, 10);
+	glRasterPos2i(0.5, 0.5);
+	
 	drawString(GLUT_BITMAP_9_BY_15, speedS);
 	
-	
+	unsigned int i;
+	glColor3f(0.0, 1.0, 0.0);
 
+
+
+	for (i = 0; i < strlen(speedS); i++)
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (int)speedS[i]);
+	
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
@@ -544,11 +575,19 @@ void display(void) {
 	glPopMatrix();
 
 	glEnable(GL_TEXTURE_2D);
-	*/
-
+	
+	
+	bitmap_output(400, 35, "This is written in a GLUT bitmap font.",
+		GLUT_BITMAP_TIMES_ROMAN_24);
+	
+	
+	bitmap_output(30, 210, "More bitmap text is a fixed 9 by 15 font.",
+		GLUT_BITMAP_9_BY_15);
+	bitmap_output(70, 240, "                Helvetica is yet another bitmap font.",
+		GLUT_BITMAP_HELVETICA_18);
 	
 	glutSwapBuffers();
-
+	
 	frameCount++;
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -570,10 +609,28 @@ void update(int i) {
 	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch);
 	
 	 //die-down of roll and pitch
-	 if (pitch < 0) pitch += 0.001f; //
-	 else if (pitch > 0) pitch -= 0.001f; //
-	 if (roll < 0) roll += 0.001f; //
-	 else if (roll > 0)roll -= 0.001f; //
+	 if (pitch < 0)
+	 {
+		 if (pitch > -0.001f) pitch = 0;
+		 else pitch += 0.001f;
+	 }
+	 else
+	 {
+		 if (pitch < 0.001f) pitch =0; 
+		 else pitch -= 0.001f;
+	 }
+
+	 if (roll < 0)
+	 {
+		 if (roll > -0.001f) roll = 0;
+		 else roll += 0.001f;
+	 }
+	 else
+	 {
+		 if (roll < 0.001f) roll = 0;
+		 else roll -= 0.001f;
+	 }
+	
 	
 	 // camera tracks ship:
 	
@@ -589,8 +646,9 @@ void update(int i) {
 			 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
 			 strcpy(viewStr, " Ship View");
 			 viewMatrix = glm::lookAt(eye, at, up);
+
 		  break;
-	case 2: //behind ship view
+		case 2: //behind ship view
 	 
 		 
 
@@ -744,8 +802,10 @@ void specialKey(int key, int x, int y) {
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(1200, 600);
+
+	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitContextVersion(3, 3);
+	
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutCreateWindow("Warbird: Nir and Megan! Press {f, t, r} : front view");
 	// initialize and verify glew

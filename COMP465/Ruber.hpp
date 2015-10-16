@@ -1,5 +1,6 @@
 # ifndef __INCLUDES465__
 # include "../includes465/include465.hpp"
+
 # define __INCLUDES465__
 # endif
 
@@ -15,6 +16,7 @@ private:
 	glm::vec3 rotationAxisPitch;
 	glm::vec3 rotationAxisRoll;
 	glm::vec3 selfRotationAxis;
+	char * speedS = "blklk";
 
 
 	// for unum's eliptical orbit calculations
@@ -39,7 +41,7 @@ public:
 	ruber(int number, int nAst) {
 		id = number;  
 		int random = rand()%200; 
-		float randomf = rand() / 1000;
+		float randomf = rand() / 1000.0f;
 
 		rotationMatrix = glm::mat4();  
 
@@ -85,16 +87,20 @@ public:
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(100, 100, 100));
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(0.0f);
+				
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(800, 0.0f, 0.0f));
 				break;
 
 			case 2: //warbird
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, 20));
-				rotationAxis = glm::vec3(0, 0, 1);
-				radians = glm::radians(0.0f);
+				rotationAxis = glm::vec3(1, 0,0 );
+				radians = glm::radians(-1.8f);
+				
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(0, 500.0, 1600.0f));
+				
+
 				orbit = false;
 				break;
 
@@ -161,29 +167,29 @@ public:
 	}
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch) {
-		
+
 		// for the moons' orbit around duo
 		double sAmp = sin(t / 300);
 		double cAmp = cos(t / 300);
-		
-	// this code makes unum's orbit eliptical, due to gravity from the sun
+
+		// this code makes unum's orbit eliptical, due to gravity from the sun
 		if (i == 1) //unum
 		{
 			distance = translationMatrix[3][0] * translationMatrix[3][0]
 				+ translationMatrix[3][1] * translationMatrix[3][1]
 				+ translationMatrix[3][2] * translationMatrix[3][2];
-			gravity = glm::vec3(-translationMatrix[3][0] *gravConst / distance, 
-				-translationMatrix[3][1] * gravConst / distance, 
-				-translationMatrix[3][2] * gravConst / distance );
+			gravity = glm::vec3(-translationMatrix[3][0] * gravConst / distance,
+				-translationMatrix[3][1] * gravConst / distance,
+				-translationMatrix[3][2] * gravConst / distance);
 			velocity.x += gravity.x;
 			velocity.y += gravity.y;
 			velocity.z += gravity.z;
-			translationMatrix[3][0] += velocity.x ;
+			translationMatrix[3][0] += velocity.x;
 			translationMatrix[3][1] += velocity.y;
 			translationMatrix[3][2] += velocity.z;
 		}
 
-		
+
 		else if (i == 2) //warbird
 		{
 			//roll and pitch
@@ -193,22 +199,25 @@ public:
 			rotationMatrix = glm::rotate(rotationMatrix, roll, rotationAxisRoll);
 
 			//thrust
-			for (int i = 0; i < 3;i++) // move in the direction of 'at' times thrust
-				translationMatrix[3][i] -= rotationMatrix[2][i]*thrust;
+			for (int i = 0; i < 3; i++) // move in the direction of 'at' times thrust
+				translationMatrix[3][i] -= rotationMatrix[2][i] * thrust;
 		}
 		else if (i == 4) // moon orbiting duo
 			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 100 * sAmp, 0.0f, 100 * cAmp));
 
 
 		else if (i >= nNonAstObj && i < nNonAstObj + nAst) // ateroids rotation around center
-			translationMatrix = glm::rotate(translationMatrix, radians*20, selfRotationAxis);
+			translationMatrix = glm::rotate(translationMatrix, radians * 20, selfRotationAxis);
 
 		if (i == 6) // missile
 		{
 			return;
 		}
-			
-		if (i!=2)	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
+
+		if (i != 2)	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
+
+
+
 		
 	}
 };
