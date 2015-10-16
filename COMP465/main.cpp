@@ -200,6 +200,8 @@ glm::mat4 identity(1.0f);
 glm::mat4 rotation;
 int timerDelay = 40, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
 double currentTime, lastTime, timeInterval;
+float timeOfShot = -1.0f;
+int missilesFired = 0;
 
 void
 bitmap_output(int x, int y, char *string, void *font)
@@ -621,10 +623,10 @@ void update(int i) {
 	//update locations to be sent to update
 	unumTrans = shape[1]->getTranslationMatrix(1);
 	missileSiteTrans = shape[7]->getTranslationMatrix(7);
-	warBTrans = shape[2]->getTranslationMatrix(2);
+	warBTrans = shape[2]->getModelMatrix(2);
 	
 	for (int i = 0; i < nModels; i++)
-		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans);
+		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
 
 	
 	 //die-down of roll and pitch
@@ -751,7 +753,7 @@ void keyboard(unsigned char key, int x, int y) {
 	
 	switch (key) {
 	case 033: case 'q':  case 'Q': exit(EXIT_SUCCESS); break;
-	case 'f': case 'F':  // front view
+	case 'w': case 'W':  // front view
 		trackShip = 7;
 		 break;
 	case 'r': case 'R':
@@ -790,6 +792,10 @@ void keyboard(unsigned char key, int x, int y) {
 		 break;
 	case 'z': case 'Z':
 		thrust -= 1.0f;
+		break;
+	case 'f': case 'F':
+		if (missilesFired<=10) timeOfShot = glutGet(GLUT_ELAPSED_TIME);
+		missilesFired++;
 		break;
 	
 	}

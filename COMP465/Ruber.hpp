@@ -24,9 +24,10 @@ private:
 	glm::vec3 mVelocity = glm::vec3(0.0f, 0.0f, 0.0f); //missile direction
 	
 	float gravConst = 100.0f;
-	float missileForceConst = 1.0f; //how quickly the missile updates its direction
+	float missileForceConst = 3.0f; //how quickly the missile updates its direction
 	glm::vec3 gravity; //for unum
 	glm::vec3 forceOnMissile;
+	
 	float distance;
 
 
@@ -138,7 +139,7 @@ public:
 				rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::vec3(1, 0, 0));
 				radians = glm::radians(0.0f);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(280.0f, 0.0, 1080.0f));
+					glm::vec3(0.0f, 0.0, 10000.0f));
 				orbit = false;
 				break; 
 
@@ -180,7 +181,7 @@ public:
 	}
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 
-				glm::mat4 unumTrans, glm::mat4 missileSiteTrans, glm::mat4 warBTrans) 
+				glm::mat4 unumTrans, glm::mat4 missileSiteTrans, glm::mat4 warBTrans, float timeOfShot) 
 	{
 
 		
@@ -227,40 +228,54 @@ public:
 
 		if (i == 6 ) // missile
 		{
-			if (t < 2000)
+			if (timeOfShot > 0)
 			{
-				forceOnMissile = glm::vec3(0, 0, -1.0f);
-				mVelocity += forceOnMissile;
+				if (t < timeOfShot + 39) //first frame
+				{
+					translationMatrix = warBTrans;
+					for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) translationMatrix[i][j] *= 0.04f;
+					
+					mVelocity = glm::vec3(0, 0, 0);
+					forceOnMissile = -0.1f * glm::vec3(warBTrans[2][0], warBTrans[2][1], warBTrans[2][2]);
+					
+				}
+				else if (t < timeOfShot + 2000)
+				{
+					
+					mVelocity += forceOnMissile;
 
-				translationMatrix[3][0] += mVelocity.x;
-				translationMatrix[3][1] += mVelocity.y;
-				translationMatrix[3][2] += mVelocity.z;
-			}
-			else if (t<20000)
-			{
-				//missile experience a constant force guiding them towards the missile site. guidance kicks in after t>2000 
-				glm::vec3 helper = glm::normalize(glm::vec3((missileSiteTrans[3][0] - translationMatrix[3][0]),
-					(missileSiteTrans[3][1] - translationMatrix[3][1]),
-					(missileSiteTrans[3][2] - translationMatrix[3][2])));
-				forceOnMissile = helper * missileForceConst;
+					translationMatrix[3][0] += mVelocity.x;
+					translationMatrix[3][1] += mVelocity.y;
+					translationMatrix[3][2] += mVelocity.z;
+				}
+				else if (t < timeOfShot + 20000)
+				{
+					//missile experience a constant force guiding them towards the missile site. guidance kicks in after t>2000 
+					glm::vec3 helper = glm::normalize(glm::vec3((missileSiteTrans[3][0] - translationMatrix[3][0]),
+						(missileSiteTrans[3][1] - translationMatrix[3][1]),
+						(missileSiteTrans[3][2] - translationMatrix[3][2])));
+					forceOnMissile = helper * missileForceConst;
 
-				
-				
-				mVelocity += forceOnMissile;
 
-				translationMatrix[3][0] += mVelocity.x;
-				translationMatrix[3][1] += mVelocity.y;
-				translationMatrix[3][2] += mVelocity.z;
 
-				glm::vec3 direction = -glm::normalize(forceOnMissile);
-				translationMatrix[2][0] =direction.x;
-				translationMatrix[2][1] = direction.y;
-				translationMatrix[2][2] = direction.z;
-				
-			}
-			else 
-			{
-				//return to hidden location
+					mVelocity += forceOnMissile;
+
+					translationMatrix[3][0] += mVelocity.x;
+					translationMatrix[3][1] += mVelocity.y;
+					translationMatrix[3][2] += mVelocity.z;
+
+					glm::vec3 direction = -glm::normalize(forceOnMissile);
+					translationMatrix[2][0] = direction.x;
+					translationMatrix[2][1] = direction.y;
+					translationMatrix[2][2] = direction.z;
+
+				}
+				else
+				{
+					//return to hidden location outside of frustrum 
+					translationMatrix = glm::translate(glm::mat4(),
+						glm::vec3(0.0f, 0.0, 10000.0f));
+				}
 			}
 		}
 		if (i == 7) // missile site for unum
