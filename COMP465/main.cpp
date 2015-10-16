@@ -18,7 +18,7 @@ Megan Kim
 
 // Shapes
 const int nAsteroids = 200;
-const int nNonAstObj = 7; // number of non-asteroid objects
+const int nNonAstObj = 8; // number of non-asteroid objects
 const int nModels = nNonAstObj + nAsteroids;
 
 float roll = 0; //left and right keys
@@ -58,7 +58,7 @@ int modelID; // to be used in vertex, shader and and other arrays
 */
 
 ruber * shape[nModels];
-char * speedS = "blalalalaCCCCC";
+char * speedS = "blalalalaCCCCC";//doesn't work yet
 
 // Model for shapes
 char * modelFile[] = 
@@ -104,6 +104,7 @@ glm::vec4 vertex[];
 glm::vec3 normal[];
 glm::vec4 diffuseColorMaterial[];
  
+glm::mat4 unumTrans = glm::mat4();
 float boundingRadius[nModels];  
 int Index = 0;  // global variable indexing into VBO arrays
 
@@ -457,7 +458,7 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia == 4 || ia == 5 || ia == 1)
+		else if (ia == 4 || ia == 5 || ia == 1 || ia==7)
 		{
 			glUseProgram(shaderProgram[0]); 
 			modelMatrix = shape[ia]->getModelMatrix(ia);
@@ -610,8 +611,13 @@ void display(void) {
 void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
 	glutTimerFunc(timerDelay, update, 1);
-	 for (int i = 0; i < nModels; i++) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch);
-	
+	for (int i = 0; i < nModels; i++)
+	{
+		
+		if (i == 7) unumTrans = shape[1]->getTranslationMatrix(1);
+		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans);
+
+	}
 	 //die-down of roll and pitch
 	 if (pitch < 0)
 	 {

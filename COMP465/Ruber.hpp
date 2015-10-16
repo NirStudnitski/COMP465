@@ -28,7 +28,7 @@ private:
 
 	float radians;
 	float radiansD = 0.5f; //radians for duo
-	const int nNonAstObj = 7; // number of non-asteroid objects
+	const int nNonAstObj = 8; // number of non-asteroid objects
 	bool orbit = true;
 	
 	
@@ -138,10 +138,11 @@ public:
 				orbit = false;
 				break; 
 
-			case 7: //missile site for 
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(70, 70, 70));
+			case 7: //missile site for unum
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, 30));
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(0.0f);
+
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(800, 0.0f, 0.0f));
 				break;
@@ -174,14 +175,14 @@ public:
 
 	}
 
-	void update(int i, double t, int nAst, float roll, float thrust, float pitch) {
+	void update(int i, double t, int nAst, float roll, float thrust, float pitch, glm::mat4 unumTrans) {
 
 		// for the moons' orbit around duo
 		double sAmp = sin(t / 300);
 		double cAmp = cos(t / 300);
 
 		// this code makes unum's orbit eliptical, due to gravity from the sun
-		if (i == 1) //unum
+		if (i == 1 ) //unum
 		{
 			distance = translationMatrix[3][0] * translationMatrix[3][0]
 				+ translationMatrix[3][1] * translationMatrix[3][1]
@@ -217,9 +218,17 @@ public:
 		else if (i >= nNonAstObj && i < nNonAstObj + nAst) // ateroids rotation around center
 			translationMatrix = glm::rotate(translationMatrix, radians * 20, selfRotationAxis);
 
-		if (i == 6) // missile
+		if (i == 6 ) // missile
 		{
 			return;
+		}
+		if (i == 7) // missile site for unum
+		{
+			translationMatrix = unumTrans;
+			translationMatrix[3][0] += 100;
+			translationMatrix = glm::rotate(translationMatrix, -1.57f, glm::vec3(0,0,1));
+
+			
 		}
 
 		if (i != 2)	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
