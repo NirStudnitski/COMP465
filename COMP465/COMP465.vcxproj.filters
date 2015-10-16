@@ -37,5 +37,8 @@
     <None Include="missile.tri">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="warbird.tri">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

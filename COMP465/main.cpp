@@ -26,7 +26,7 @@ float thrust = 0; // 'a' for more thrust, 'z' for less
 float pitch = -0.025f; //up and down keys
 
 const int nFacets = 4416;
-const int nFacetsWB = 4245;
+const int nFacetsWB = 17022;
 const int nFacetsMoon = 1104;
 const int nFacetsMissile = 252;
 

@@ -132,6 +132,7 @@
     <None Include="missile.tri" />
     <None Include="simpleFragment.glsl" />
     <None Include="simpleVertex.glsl" />
+    <None Include="warbird.tri" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
