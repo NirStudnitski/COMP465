@@ -137,6 +137,14 @@ public:
 					glm::vec3(280.0f, 0.0, 1080.0f));
 				orbit = false;
 				break; 
+
+			case 7: //missile site for 
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(70, 70, 70));
+				rotationAxis = glm::vec3(0, 1, 0);
+				radians = glm::radians(0.0f);
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(800, 0.0f, 0.0f));
+				break;
 			}
 		}
 	}

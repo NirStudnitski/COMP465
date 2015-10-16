@@ -29,6 +29,7 @@ const int nFacets = 4416;
 const int nFacetsWB = 17022;
 const int nFacetsMoon = 1104;
 const int nFacetsMissile = 252;
+const int nFacetsMissileSite = 54;
 
 const int nFacetsAsteroid = 118;
 const int nFacetsAsteroid2 = 82;
@@ -48,11 +49,12 @@ int modelID; // to be used in vertex, shader and and other arrays
 	4 = duo moon
 	5 = duo moon 2
 	6 = missile
-	7 = asteroid
-	8 = asteroid2
-	9 = asteroid3
-	10 = asteroid4
-	11 = asteroid5
+	7 = missile site
+	8 = asteroid
+	9 = asteroid2
+	10 = asteroid3
+	11 = asteroid4
+	12 = asteroid5
 */
 
 ruber * shape[nModels];
@@ -68,6 +70,7 @@ char * modelFile[] =
 	"moon.tri", 
 	"moon.tri", 
 	"missile.tri",
+	"missileSite.tri",
 	"asteroid.tri",
 	"asteroid2.tri",
 	"asteroid3.tri",
@@ -78,15 +81,16 @@ char * modelFile[] =
 
 // read how many facets in tri file
 
-const GLuint nVertices[] = 
-{ 
-	nFacets * 3, 
-	nFacets * 3, 
-	nFacetsWB*3, 
-	nFacets * 3, 
-	nFacetsMoon * 3, 
-	nFacetsMoon * 3, 
+const GLuint nVertices[] =
+{
+	nFacets * 3,
+	nFacets * 3,
+	nFacetsWB * 3,
+	nFacets * 3,
+	nFacetsMoon * 3,
+	nFacetsMoon * 3,
 	nFacetsMissile * 3,
+	nFacetsMissileSite * 3,
 	nFacetsAsteroid * 3,
 	nFacetsAsteroid2 * 3,
 	nFacetsAsteroid3 * 3,
