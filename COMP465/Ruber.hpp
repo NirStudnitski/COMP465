@@ -24,7 +24,7 @@ private:
 	glm::vec3 mVelocity = glm::vec3(0.0f, 0.0f, 0.0f); //missile direction
 	
 	float gravConst = 100.0f;
-	float missileForceConst = 3.0f; //how quickly the missile updates its direction
+	float missileForceConst = 6.0f; //how quickly the missile updates its direction
 	glm::vec3 gravity; //for unum
 	glm::vec3 forceOnMissile;
 	
@@ -259,6 +259,7 @@ public:
 
 
 					mVelocity += forceOnMissile;
+					mVelocity = glm::normalize(mVelocity)*20.0f; //limit the magnitude of mVelocity
 
 					translationMatrix[3][0] += mVelocity.x;
 					translationMatrix[3][1] += mVelocity.y;

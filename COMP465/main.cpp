@@ -1,5 +1,5 @@
 /* 
-Warbird Simulation - Phase 1
+Warbird Simulation - Phase 2
 
 Comp 465
 
@@ -334,11 +334,11 @@ void drawString(void * font, char *s) {
 
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	
+
+
 
 	// update model matrix, set MVP, draw
-	for (int ia = 0; ia < nModels; ia++) 
+	for (int ia = 0; ia < nModels; ia++)
 	{
 		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
@@ -352,39 +352,39 @@ void display(void) {
 			//distances to each sun (already squared)
 			distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
 				translationMatrix2[3][1] * translationMatrix2[3][1] +
-				translationMatrix2[3][2]*translationMatrix2[3][2];
+				translationMatrix2[3][2] * translationMatrix2[3][2];
 			distanceToR *= lightMitigator; //give ruber more intensity
 
 			distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
 				(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
 				(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
 
-			
+
 			// light intensity is proportional to the inverse sqare of distance
-			intensityR = (float) 1/ distanceToR;
-			intensityD = (float) 1/ distanceToD ;
+			intensityR = (float)1 / distanceToR;
+			intensityD = (float)1 / distanceToD;
 
 			//fractional intensity
-			float sum = (intensityR + intensityD)/3;
+			float sum = (intensityR + intensityD) / 3;
 
 			intensityR = intensityR / sum;
 			intensityD = intensityD / sum;
 			//intensityD *= (1800 - sqrt(distanceToD)) / 1200;
 			//normalised pointer vectors to Ruber and Duo
-			R = normalize(glm:: vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
-			
-			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], 
-										translationMatrix2[3][1] - duoModelMat[3][1], 
-										translationMatrix2[3][2] - duoModelMat[3][2]));
+			R = normalize(glm::vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
 
-			
+			posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0],
+				translationMatrix2[3][1] - duoModelMat[3][1],
+				translationMatrix2[3][2] - duoModelMat[3][2]));
 
-			
+
+
+
 
 
 			glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 			glUniformMatrix4fv(ROT, 1, GL_FALSE, glm::value_ptr(rotationMatrix2));
-			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2)); 
+			glUniformMatrix4fv(TOT, 1, GL_FALSE, glm::value_ptr(translationMatrix2));
 			glUniformMatrix4fv(PD, 1, GL_FALSE, glm::value_ptr(duoModelMat));
 			glUniform3fv(dirD, 1, glm::value_ptr(posD));
 			glUniform3fv(dirR, 1, glm::value_ptr(R));
@@ -396,7 +396,7 @@ void display(void) {
 			glUniform1f(intensD, intensityD);
 			glUniform1i(shaderHandle, shaderID);
 			glUniform1f(intensR, intensityR);
-			
+
 			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
 			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
 			glBindVertexArray(vao[ia]);
@@ -404,7 +404,7 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia ==2) //warbird
+		else if (ia == 2) //warbird
 		{
 			glUseProgram(shaderProgram[0]); //1
 			modelMatrix = shape[ia]->getModelMatrix(ia);
@@ -424,7 +424,7 @@ void display(void) {
 				(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
 
 
-			
+
 			// light intensity is proportional to the inverse sqare of distance
 			intensityR = (float)1 / distanceToR;
 			intensityD = (float)1 / distanceToD;
@@ -466,9 +466,9 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia == 4 || ia == 5 || ia == 1 || ia==7)
+		else if (ia == 4 || ia == 5 || ia == 1 || ia == 7)
 		{
-			glUseProgram(shaderProgram[0]); 
+			glUseProgram(shaderProgram[0]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
 			rotationMatrix2 = shape[ia]->getModelMatrix(ia);
@@ -520,10 +520,10 @@ void display(void) {
 			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
 			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
 			glBindVertexArray(vao[ia]);
-			
+
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[ia]);
 		}
-		else if (ia==3)//duo (a blue sun)
+		else if (ia == 3)//duo (a blue sun)
 		{
 			glUseProgram(shaderProgram[0]); //
 			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
@@ -554,50 +554,6 @@ void display(void) {
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
 	}
-	
-	// text on screen - desn't work yet
-	
-	glDisable(GL_TEXTURE_2D);
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	
-	glOrtho(0, windowWidth, 0, windowHeight, -5,5);
-	
-	
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	
-	glRasterPos2i(0.5, 0.5);
-	
-	drawString(GLUT_BITMAP_9_BY_15, speedS);
-	
-	unsigned int i;
-	glColor3f(0.0, 1.0, 0.0);
-
-
-
-	for (i = 0; i < strlen(speedS); i++)
-		glutStrokeCharacter(GLUT_STROKE_ROMAN, (int)speedS[i]);
-	
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glEnable(GL_TEXTURE_2D);
-	
-	
-	bitmap_output(400, 35, "This is written in a GLUT bitmap font.",
-		GLUT_BITMAP_TIMES_ROMAN_24);
-	
-	
-	bitmap_output(30, 210, "More bitmap text is a fixed 9 by 15 font.",
-		GLUT_BITMAP_9_BY_15);
-	bitmap_output(70, 240, "                Helvetica is yet another bitmap font.",
-		GLUT_BITMAP_HELVETICA_18);
 	
 	glutSwapBuffers();
 	
