@@ -83,7 +83,7 @@ public:
 			case 0: //ruber
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(300, 300, 300));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(-2.0f);
+				radians = glm::radians(-0.50f);
 				break;
 
 			case 1: //unum
