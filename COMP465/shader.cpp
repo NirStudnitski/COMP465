@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "ruber.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -16,10 +17,10 @@ Shader::Shader(const std::string& fileName)
 	glBindAttribLocation(m_program, 2, "normal");
 
 	glLinkProgram(m_program);
-	CheckShaderError(m_program, GL_LINK_STATUS, true, "Error linking shader program");
+	CheckShaderError(m_program, GL_LINK_STATUS, true, "Error linking shader programghghghgh");
 
 	glValidateProgram(m_program);
-	CheckShaderError(m_program, GL_LINK_STATUS, true, "Invalid shader program");
+	CheckShaderError(m_program, GL_LINK_STATUS, true, "Invalid shader programnnmn,mn,mnm");
 
 	m_uniforms[0] = glGetUniformLocation(m_program, "MVP");
 	m_uniforms[1] = glGetUniformLocation(m_program, "Normal");
@@ -42,10 +43,10 @@ void Shader::Bind()
 	glUseProgram(m_program);
 }
 
-void Shader::Update(const Transform& transform, const Camera& camera)
+void Shader::Update(glm::mat4 mM, glm::mat4 viewM, glm::mat4 projM, const Transform& transform, const Camera& camera)
 {
-	glm::mat4 MVP = transform.GetMVP(camera);
-	glm::mat4 Normal = transform.GetModel();
+	glm::mat4 MVP =projM * viewM * mM;
+	glm::mat4 Normal = glm::mat4(1.0f); //transform.GetModel();
 
 	glUniformMatrix4fv(m_uniforms[0], 1, GL_FALSE, &MVP[0][0]);
 	glUniformMatrix4fv(m_uniforms[1], 1, GL_FALSE, &Normal[0][0]);
@@ -112,7 +113,7 @@ GLuint Shader::CreateShader(const std::string& text, unsigned int type)
     glShaderSource(shader, 1, p, lengths);
     glCompileShader(shader);
 
-    CheckShaderError(shader, GL_COMPILE_STATUS, false, "Error compiling shader!");
+    CheckShaderError(shader, GL_COMPILE_STATUS, false, "Error compiling shader hhhhhh!");
 
     return shader;
 }

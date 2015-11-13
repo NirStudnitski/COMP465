@@ -38,9 +38,6 @@
     <ClInclude Include="Ruber.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="obj_loader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -62,6 +59,12 @@
     <ClInclude Include="camera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleFragment.glsl">
@@ -80,6 +83,12 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="missileSite.tri">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="basicShader.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="basicShader.vs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

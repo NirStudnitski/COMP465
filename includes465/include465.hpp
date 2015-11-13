@@ -82,6 +82,6 @@ Mike Barnes
 # include "../includes465/triModel465.hpp"  // load AC3D *.tri model 
 # endif
 
-const float PI = 3.14159f;
+//const float PI = 3.14159f;
   
 

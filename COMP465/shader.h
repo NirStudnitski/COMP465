@@ -5,13 +5,15 @@
 #include <GL/glew.h>
 #include "transform.h"
 
+
 class Shader
 {
 public:
 	Shader(const std::string& fileName);
+	
 
 	void Bind();
-	void Update(const Transform& transform, const Camera& camera);
+	void Update(glm::mat4 mM, glm::mat4 viewM, glm::mat4 projM, const Transform& transform, const Camera& camera);
 
 	virtual ~Shader();
 protected:

@@ -37,9 +37,6 @@ private:
 	bool orbit = true;
 	
 	
-	//void printText2D(const char * text, int x, int y, int size);
-	//void cleanupText2D();
-
 
 public:
 
@@ -71,11 +68,12 @@ public:
 				case 4:
 					selfRotationAxis = glm::vec3(0.0, 0.5, 0.0);
 					break;
-				case 5:
+				case 5: 
 					selfRotationAxis = glm::vec3(0.5, 0.0, 0.0);
 					break;
 			}
 			radians = glm::radians(1.4f - (float) random/250);
+			//radians = glm::radians(0.0f);
 			translationMatrix = glm::translate(glm::mat4(),
 				glm::vec3((500+ random)* cos(randomf), 0.0f, (500 + random)* sin(randomf)));
 		}
@@ -85,7 +83,7 @@ public:
 			case 0: //ruber
 				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(300, 300, 300));
 				rotationAxis = glm::vec3(0, 1, 0);
-				radians = glm::radians(-20.0f);
+				radians = glm::radians(-2.0f);
 				break;
 
 			case 1: //unum

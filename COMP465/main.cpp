@@ -1,5 +1,5 @@
 /* 
-Warbird Simulation - Phase 2
+Warbird Simulation - Phase 2+3
 
 Comp 465
 
@@ -15,6 +15,11 @@ Megan Kim
 # include "Ruber.hpp"
 # include <GL/glut.h>
 # include <stdio.h>
+#include "mesh.hpp"
+#include "shader.h"
+#include "texture.h"
+#include "transform.h"
+#include "camera.h"
 
 // Shapes
 const int nAsteroids = 200;
@@ -59,6 +64,11 @@ int modelID; // to be used in vertex, shader and and other arrays
 
 ruber * shape[nModels];
 char * speedS = "blalalalaCCCCC";//doesn't work yet
+Mesh * mesh;
+Shader * shader;
+Texture * texture;
+Camera * camera;
+Transform * transform;
 
 // Model for shapes
 char * modelFile[] = 
@@ -122,8 +132,8 @@ char titleStr[100];
 
 GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
-GLuint vao[nModels];  // VertexArrayObject
-GLuint buffer[nModels];
+GLuint vao[nModels+1];  // VertexArrayObject
+GLuint buffer[nModels+4];
 GLuint shaderProgram[1];
 char * vertexShaderFile[1] = { "simpleVertex.glsl" };
 char * fragmentShaderFile[1] = {"simpleFragment.glsl" };
@@ -203,50 +213,18 @@ double currentTime, lastTime, timeInterval;
 float timeOfShot = -1.0f;
 int missilesFired = 0;
 
-void
-bitmap_output(int x, int y, char *string, void *font)
-{
-	int len, i;
 
-	glRasterPos2f(x, y);
-	len = (int)strlen(string);
-	for (i = 0; i < len; i++) {
-		glutBitmapCharacter(font, string[i]);
-	}
-}
-
-void
-stroke_output(GLfloat x, GLfloat y, char *format, ...)
-{
-	va_list args;
-	char buffer[200], *p;
-
-	va_start(args, format);
-	vsprintf(buffer, format, args);
-	va_end(args);
-	glPushMatrix();
-	glTranslatef(x, y, 0);
-	glScalef(0.005, 0.005, 0.005);
-	for (p = buffer; *p; p++)
-		glutStrokeCharacter(GLUT_STROKE_ROMAN, *p);
-	glPopMatrix();
-}
 void init(void) {
 	
 
 	
-		shaderProgram[0] = loadShaders(vertexShaderFile[0], fragmentShaderFile[0]);
+	shaderProgram[0] = loadShaders(vertexShaderFile[0], fragmentShaderFile[0]);
 	
+	//this is where i need to make a modification
+	glGenVertexArrays(nModels+1, vao);
+	
+	glGenBuffers(nModels+4, buffer);
 
-	glGenVertexArrays(nModels, vao);
-	//glBindVertexArray(vao);
-
-	// Create and initialize a buffer object
-	// GLuint buffer;
-	glGenBuffers(nModels, buffer);
-
-
-	//glUseProgram(0);
 	for (int i = 0; i < nModels; i++)
 	{
 		
@@ -300,8 +278,13 @@ void init(void) {
 
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
+	mesh = new Mesh("./bla.obj", vao, buffer, nModels);
+	shader = new Shader("./basicShader");
+	texture = new Texture("./ruberTexture.jpg");
+	Transform transform;
+	Camera camera(eye, glm::radians(45.0f), (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0f, 10000.0f);
 	
-
+	
 	lastTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
 
 }
@@ -310,11 +293,7 @@ void reshape(int w, int h) {
 	glViewport(0, 0, w, h);
 	projectionMatrix = glm::perspective(glm::radians(45.0f), (GLfloat)w / (GLfloat)h, 1.0f, 10000.0f);
 	
-	 
-	
 }
-
-
 
 void drawString(void * font, char *s) {
 	unsigned int i;
@@ -325,12 +304,6 @@ void drawString(void * font, char *s) {
 	for (i = 0; i < strlen(s); i++)
 		glutBitmapCharacter(font, (int) s[i]);
 }
-
-
-
-
-
-
 
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -397,8 +370,6 @@ void display(void) {
 			glUniform1i(shaderHandle, shaderID);
 			glUniform1f(intensR, intensityR);
 
-			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
-			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
@@ -538,7 +509,7 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else //ruber
+		else //ruber + missiles
 		{
 			glUseProgram(shaderProgram[0]);
 			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
@@ -551,10 +522,15 @@ void display(void) {
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
-			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+			//glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-	}
-	
+	}	
+	shader->Bind();
+	texture->Bind();
+	modelMatrix = shape[0]->getModelMatrix(0);
+	shader->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+	mesh->Draw(vao, buffer, nModels);
+
 	glutSwapBuffers();
 	
 	frameCount++;
@@ -583,7 +559,7 @@ void update(int i) {
 	
 	for (int i = 0; i < nModels; i++)
 		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
-
+	mesh->update();
 	
 	 //die-down of roll and pitch
 	 if (pitch < 0)
@@ -781,6 +757,7 @@ void specialKey(int key, int x, int y) {
 }
 
 int main(int argc, char* argv[]) {
+	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 

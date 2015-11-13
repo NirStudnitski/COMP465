@@ -131,7 +131,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="mesh.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="mesh.hpp" />
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="Ruber.hpp" />
     <ClInclude Include="shader.h" />
@@ -142,6 +143,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="asteroid.tri" />
+    <None Include="basicShader.fs" />
+    <None Include="basicShader.vs" />
     <None Include="missile.tri" />
     <None Include="missileSite.tri" />
     <None Include="simpleFragment.glsl" />
