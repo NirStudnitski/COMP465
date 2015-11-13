@@ -278,9 +278,9 @@ void init(void) {
 
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
-	mesh = new Mesh("./bla.obj", vao, buffer, nModels);
+	mesh = new Mesh("./stars.obj", vao, buffer, nModels);
 	shader = new Shader("./basicShader");
-	texture = new Texture("./ruberTexture.jpg");
+	texture = new Texture("./space.jpg");
 	Transform transform;
 	Camera camera(eye, glm::radians(45.0f), (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0f, 10000.0f);
 	
