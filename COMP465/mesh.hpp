@@ -51,12 +51,12 @@ public:
 		glm::mat4 scaleMatrixM;
 		glm::mat4 translationMatrixM;
 		glm::vec3 rotationAxisM;
-    Mesh(const std::string& fileName, GLuint vao[], GLuint buffer[], int nModels );
+    Mesh(const std::string& fileName, GLuint vao[], GLuint buffer[], int nModels , int meshIndex);
 	
 	Mesh(Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices
-		, GLuint vao[], GLuint buffer[], int nModels);
+		, GLuint vao[], GLuint buffer[], int nModels, int meshIndex);
 	void update();
-	void Draw(GLuint vao[], GLuint buffer[], int nModels);
+	void Draw(GLuint vao[], GLuint buffer[], int nModels, int meshIndex);
 	glm::mat4 getModelMatrix();
 
 	virtual ~Mesh();
@@ -66,7 +66,7 @@ private:
 	void operator=(const Mesh& mesh) {}
 	Mesh(const Mesh& mesh) {}
 	
-    void InitMesh(const IndexedModel& model, GLuint vao[], GLuint buffer[], int nModels);
+    void InitMesh(const IndexedModel& model, GLuint vao[], GLuint buffer[], int nModels, int meshIndex);
 
 	GLuint m_vertexArrayObject;
 	GLuint m_vertexArrayBuffers[NUM_BUFFERS];

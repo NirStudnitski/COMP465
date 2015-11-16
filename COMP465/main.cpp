@@ -24,7 +24,8 @@ Megan Kim
 // Shapes
 const int nAsteroids = 200;
 const int nNonAstObj = 8; // number of non-asteroid objects
-const int nModels = nNonAstObj + nAsteroids;
+const int numOBJ = 5; // number of OBJ meshes
+const int nModels = nNonAstObj + nAsteroids + numOBJ;
 
 float roll = 0; //left and right keys
 float thrust = 0; // 'a' for more thrust, 'z' for less
@@ -62,11 +63,25 @@ int modelID; // to be used in vertex, shader and and other arrays
 	12 = asteroid5
 */
 
+
 ruber * shape[nModels];
 char * speedS = "blalalalaCCCCC";//doesn't work yet
 Mesh * mesh;
 Shader * shader;
 Texture * texture;
+
+Mesh * meshRuber;
+Shader * shaderRuber;
+Texture * textureRuber;
+
+Mesh * meshUnum;
+Shader * shaderUnum;
+Texture * textureUnum;
+
+Mesh * meshDuo;
+Shader * shaderDuo;
+Texture * textureDuo;
+
 Camera * camera;
 Transform * transform;
 
@@ -132,8 +147,8 @@ char titleStr[100];
 
 GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
-GLuint vao[nModels+1];  // VertexArrayObject
-GLuint buffer[nModels+4];
+GLuint vao[nModels];  // VertexArrayObject
+GLuint buffer[nModels+3*numOBJ];
 GLuint shaderProgram[1];
 char * vertexShaderFile[1] = { "simpleVertex.glsl" };
 char * fragmentShaderFile[1] = {"simpleFragment.glsl" };
@@ -220,12 +235,12 @@ void init(void) {
 	
 	shaderProgram[0] = loadShaders(vertexShaderFile[0], fragmentShaderFile[0]);
 	
-	//this is where i need to make a modification
-	glGenVertexArrays(nModels+1, vao);
 	
-	glGenBuffers(nModels+4, buffer);
+	glGenVertexArrays(nModels, vao);
+	
+	glGenBuffers(nModels+3*numOBJ, buffer);
 
-	for (int i = 0; i < nModels; i++)
+	for (int i = 0; i < nModels-numOBJ; i++)
 	{
 		
 		
@@ -275,12 +290,25 @@ void init(void) {
 	// set render state values
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
+	printf("number of models = %i", nModels);
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
-	mesh = new Mesh("./stars.obj", vao, buffer, nModels);
+	mesh = new Mesh("./stars.obj", vao, buffer, nModels,0);
 	shader = new Shader("./basicShader");
-	texture = new Texture("./space.jpg");
+	texture = new Texture("./ruberText2.jpg");
+
+	meshRuber = new Mesh("./stars.obj", vao, buffer, nModels,1);
+	shaderRuber = new Shader("./basicShader");
+	textureRuber = new Texture("./starFieldC.jpg");
+
+	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels, 2);
+	shaderUnum = new Shader("./basicShader");
+	textureUnum = new Texture("./unum.jpg");
+
+	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels, 3);
+	shaderDuo = new Shader("./basicShader");
+	textureDuo = new Texture("./duo.jpg");
+
 	Transform transform;
 	Camera camera(eye, glm::radians(45.0f), (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0f, 10000.0f);
 	
@@ -311,7 +339,7 @@ void display(void) {
 
 
 	// update model matrix, set MVP, draw
-	for (int ia = 0; ia < nModels; ia++)
+	for (int ia = 0; ia < nModels-numOBJ; ia++)
 	{
 		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
@@ -437,8 +465,9 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia == 4 || ia == 5 || ia == 1 || ia == 7)
+		else if (ia == 4 || ia == 5 || ia == 7)
 		{
+			
 			glUseProgram(shaderProgram[0]);
 			modelMatrix = shape[ia]->getModelMatrix(ia);
 			ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
@@ -488,13 +517,12 @@ void display(void) {
 			glUniform1f(intensD, intensityD);
 			glUniform1f(intensR, intensityR);
 
-			//glUniform3fv(PR, 1,  glm::value_ptr(ruberPos));
-			//glUniform3fv(PD, 1, glm::value_ptr(duoPos));
+			
 			glBindVertexArray(vao[ia]);
 
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[ia]);
 		}
-		else if (ia == 3)//duo (a blue sun)
+		else if (ia == 3)//duo (a red sun)
 		{
 			glUseProgram(shaderProgram[0]); //
 			glUniform4fv(CD, 1, glm::value_ptr(duoLightColor));
@@ -507,9 +535,9 @@ void display(void) {
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
-			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+			//glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else //ruber + missiles
+		else if (ia == 6)//missiles
 		{
 			glUseProgram(shaderProgram[0]);
 			glUniform4fv(CR, 1, glm::value_ptr(ruberLightColor));
@@ -522,28 +550,40 @@ void display(void) {
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
-			//glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
 	}	
 	shader->Bind();
 	texture->Bind();
 	modelMatrix = shape[0]->getModelMatrix(0);
 	shader->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
-	mesh->Draw(vao, buffer, nModels);
+	mesh->Draw(vao, buffer, nModels, 0);
+	
+	shaderRuber->Bind();
+	textureRuber->Bind();
+	modelMatrix = shape[209]->getModelMatrix(209);
+	shaderRuber->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+	meshRuber->Draw(vao, buffer, nModels, 1);
+	
+	shaderUnum->Bind();
+	textureUnum->Bind();
+	modelMatrix = shape[1]->getModelMatrix(1);
+	shaderUnum->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+	meshUnum->Draw(vao, buffer, nModels, 2);
 
+	shaderDuo->Bind();
+	textureDuo->Bind();
+	modelMatrix = shape[3]->getModelMatrix(3);
+	shaderDuo->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+	meshDuo->Draw(vao, buffer, nModels, 3);
+	
 	glutSwapBuffers();
 	
 	frameCount++;
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
 	timeInterval = currentTime - lastTime;
-	/*
-	if (timeInterval >= 1000) {
-		sprintf(fpsStr, " fps %4d", (int)(frameCount / (timeInterval / 1000.0f)));
-		lastTime = currentTime;
-		frameCount = 0;
-		updateTitle();
-	}*/
+	
 }
 
 // Animate scene objects by updating their transformation matrices
@@ -560,6 +600,7 @@ void update(int i) {
 	for (int i = 0; i < nModels; i++)
 		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
 	mesh->update();
+	meshRuber->update();
 	
 	 //die-down of roll and pitch
 	 if (pitch < 0)

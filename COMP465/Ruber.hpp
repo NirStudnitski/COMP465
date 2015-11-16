@@ -149,6 +149,14 @@ public:
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(800, 0.0f, 0.0f));
 				break;
+
+			case 209: // star sphere
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(3000, 3000, 3000));
+				rotationAxis = glm::vec3(0, 1, 0);
+				radians = glm::radians(0.05f);
+				
+				break;
+			
 			}
 		}
 	}
@@ -204,6 +212,7 @@ public:
 
 		else if (i == 2) //warbird
 		{
+			
 			//roll and pitch
 			rotationAxisPitch = glm::vec3(translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2]);
 			rotationAxisRoll = glm::vec3(translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2]);
