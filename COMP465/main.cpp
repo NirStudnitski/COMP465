@@ -177,7 +177,7 @@ glm::mat4 duoModelMat;
 GLuint PD;  //handle
 
 
-glm::vec4 ruberLightColor = glm::vec4(0.4f,0.5f,1.0f,1.0f);
+glm::vec4 ruberLightColor = glm::vec4(0.6f,0.7f,1.0f,1.0f);
 GLuint CR;  //handle
 
 

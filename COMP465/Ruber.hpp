@@ -151,7 +151,7 @@ public:
 				break;
 
 			case 209: // star sphere
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(3000, 3000, 3000));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(6000, 6000, 6000));
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(0.05f);
 				
