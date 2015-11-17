@@ -181,7 +181,7 @@ glm::vec4 ruberLightColor = glm::vec4(0.6f,0.7f,1.0f,1.0f);
 GLuint CR;  //handle
 
 
-glm::vec4 duoLightColor = glm::vec4(1.0f, 0.2f, 0.5f, 1.0f);
+glm::vec4 duoLightColor = glm::vec4(1.0f, 0.2f, 0.3f, 1.0f);
 GLuint CD;  //handle
 
 
@@ -248,7 +248,7 @@ void init(void) {
 		if (i >= nNonAstObj && i < nNonAstObj + nAsteroids) modelID = (i - nNonAstObj) % 5 + nNonAstObj;
 		else modelID = i;
 		
-		 boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
+		 if (modelID != 0 && modelID !=3 && modelID != 1) boundingRadius[i] = loadModelBuffer(modelFile[modelID], nVertices[modelID], vao[i], buffer[i], shaderProgram[shaderID],
 			vPosition[i], vColor[i], vNormal[i], "vPosition", "vColor", "vNormal");
 		
 		

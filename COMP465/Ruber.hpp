@@ -195,6 +195,8 @@ public:
 		// this code makes unum's orbit eliptical, due to gravity from the sun
 		if (i == 1 ) //unum
 		{
+			translationMatrix = glm::rotate(translationMatrix, -0.02f, glm::vec3(0, 1, 0));
+
 			distance = translationMatrix[3][0] * translationMatrix[3][0]
 				+ translationMatrix[3][1] * translationMatrix[3][1]
 				+ translationMatrix[3][2] * translationMatrix[3][2];
@@ -207,6 +209,11 @@ public:
 			translationMatrix[3][0] += velocity.x;
 			translationMatrix[3][1] += velocity.y;
 			translationMatrix[3][2] += velocity.z;
+
+
+			
+
+
 		}
 
 
@@ -225,8 +232,8 @@ public:
 		}
 		else if (i == 4) // moon orbiting duo
 		{
-			double sAmp = sin(t / 300);
-			double cAmp = cos(t / 300);
+			double sAmp = sin(t / 1600);
+			double cAmp = cos(t / 1600);
 			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 100 * sAmp, 0.0f, 100 * cAmp));
 		}
 
@@ -288,19 +295,20 @@ public:
 		}
 		if (i == 7) // missile site for unum
 		{
-			float angle = t / 3000.0f;
+			float angle = t / 2550.0f;
 			double sAmp = sin(angle);
 			double cAmp = cos(angle);
 			translationMatrix = unumTrans;
 			
-			translationMatrix = glm::rotate(translationMatrix, -1.57f, glm::vec3(0,0,1));
-			translationMatrix = glm::rotate(translationMatrix, angle, glm::vec3(1, 0, 0));
-			translationMatrix[3][0] += 100 * cAmp;
-			translationMatrix[3][2] += 100 * sAmp;
+			translationMatrix = glm::rotate(translationMatrix, 1.57f, glm::vec3(1,0,0));
+			translationMatrix = glm::rotate(translationMatrix, 0.02f, glm::vec3(1, 0, 0));
+			translationMatrix[3][0] += 110 * cAmp;
+			translationMatrix[3][2] += 110 * sAmp;
 			
 
 			
 		}
+		if (i==3) translationMatrix = glm::rotate(translationMatrix, -0.03f, glm::vec3(0, 1, 0));
 
 		if (i != 2)	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
 
