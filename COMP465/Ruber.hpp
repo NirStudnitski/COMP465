@@ -195,7 +195,7 @@ public:
 		// this code makes unum's orbit eliptical, due to gravity from the sun
 		if (i == 1 ) //unum
 		{
-			translationMatrix = glm::rotate(translationMatrix, -0.02f, glm::vec3(0, 1, 0));
+			translationMatrix = glm::rotate(translationMatrix, 0.02f, glm::vec3(0, 1, 0));
 
 			distance = translationMatrix[3][0] * translationMatrix[3][0]
 				+ translationMatrix[3][1] * translationMatrix[3][1]
@@ -295,13 +295,14 @@ public:
 		}
 		if (i == 7) // missile site for unum
 		{
-			float angle = t / 2550.0f;
+			float angle = -t / 2550.0f;
 			double sAmp = sin(angle);
 			double cAmp = cos(angle);
 			translationMatrix = unumTrans;
 			
-			translationMatrix = glm::rotate(translationMatrix, 1.57f, glm::vec3(1,0,0));
-			translationMatrix = glm::rotate(translationMatrix, 0.02f, glm::vec3(1, 0, 0));
+			translationMatrix = glm::rotate(translationMatrix, -1.57f, glm::vec3(1,0,0));
+			translationMatrix = glm::rotate(translationMatrix, 3.14f, glm::vec3(0, 1, 0));
+			translationMatrix = glm::rotate(translationMatrix, -0.02f, glm::vec3(1, 0, 0));
 			translationMatrix[3][0] += 110 * cAmp;
 			translationMatrix[3][2] += 110 * sAmp;
 			

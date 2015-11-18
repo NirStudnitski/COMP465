@@ -567,7 +567,7 @@ void display(void) {
 
 	modelMatrix = shape[1]->getModelMatrix(1);
 	ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
-	rotationMatrix2 = glm::rotate(modelMatrix, 0.02f, glm::vec3(0, 1, 0));
+	rotationMatrix2 = glm::rotate(modelMatrix, -0.02f, glm::vec3(0, 1, 0));
 	translationMatrix2 = shape[1]->getModelMatrix(1);
 	duoModelMat = shape[3]->getModelMatrix(3);
 
