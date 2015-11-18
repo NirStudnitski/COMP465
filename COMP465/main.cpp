@@ -133,7 +133,7 @@ glm::vec4 diffuseColorMaterial[];
 //locations informations send to update
 glm::mat4 warBTrans = glm::mat4();
 glm::mat4 missileSiteTrans = glm::mat4();
-glm::mat4 unumTrans = glm::mat4();
+glm::mat4 unumTrans, duoTrans;
 
 
 float boundingRadius[nModels];  
@@ -144,6 +144,8 @@ int Index = 0;  // global variable indexing into VBO arrays
 char baseStr[100] = "Warbird: Nir and Megan! ";
 char fpsStr[15], viewStr[15] = " front view";
 char titleStr[100];
+
+bool planetGravity = true;
 
 GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
@@ -640,11 +642,13 @@ void update(int i) {
 	
 	//update locations to be sent to update
 	unumTrans = shape[1]->getTranslationMatrix(1);
+	duoTrans = shape[3]->getTranslationMatrix(3);
 	missileSiteTrans = shape[7]->getTranslationMatrix(7);
 	warBTrans = shape[2]->getModelMatrix(2);
 	
 	for (int i = 0; i < nModels; i++)
-		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
+		if (i!=2) shape[i]->update(i, currentTime, nAsteroids, timeOfShot, warBTrans, unumTrans, missileSiteTrans);
+		else shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, duoTrans, missileSiteTrans, warBTrans, timeOfShot, planetGravity);
 	mesh->update();
 	meshRuber->update();
 	
@@ -781,7 +785,9 @@ void keyboard(unsigned char key, int x, int y) {
 	case 't': case 'T':  // top view
 		trackShip = 9;
 		 break;
-
+	case 'g': case 'G':  // planet gravity
+		planetGravity = !planetGravity;
+		break;
 		
 	case 'v': case 'V':  // toggle view
 		if (trackShip!=9) trackShip++;
