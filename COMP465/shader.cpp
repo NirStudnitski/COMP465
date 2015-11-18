@@ -1,7 +1,14 @@
+
+
 #include "shader.h"
 #include "ruber.hpp"
+#include <GL/glew.h>
 #include <iostream>
 #include <fstream>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 
 Shader::Shader(const std::string& fileName)
 {
@@ -21,10 +28,28 @@ Shader::Shader(const std::string& fileName)
 
 	glValidateProgram(m_program);
 	CheckShaderError(m_program, GL_LINK_STATUS, true, "Invalid shader programnnmn,mn,mnm");
-
+	
 	m_uniforms[0] = glGetUniformLocation(m_program, "MVP");
 	m_uniforms[1] = glGetUniformLocation(m_program, "Normal");
 	m_uniforms[2] = glGetUniformLocation(m_program, "lightDirection");
+	
+	PRu = glGetUniformLocation(m_program, "posRu");
+
+	statu = glGetUniformLocation(m_program, "statMu");
+
+	CRu = glGetUniformLocation(m_program, "colRu");
+	
+	CDu = glGetUniformLocation(m_program, "colDu");
+
+
+
+	//these distances will passes squared( raised to the power of 2)
+	intensDu = glGetUniformLocation(m_program, "intensityDu");
+	intensRu = glGetUniformLocation(m_program, "intensityRu");
+
+	dirRu = glGetUniformLocation(m_program, "Ru");
+	dirDu = glGetUniformLocation(m_program, "posDu");
+	
 }
 
 Shader::~Shader()
@@ -51,6 +76,36 @@ void Shader::Update(glm::mat4 mM, glm::mat4 viewM, glm::mat4 projM, const Transf
 	glUniformMatrix4fv(m_uniforms[0], 1, GL_FALSE, &MVP[0][0]);
 	glUniformMatrix4fv(m_uniforms[1], 1, GL_FALSE, &Normal[0][0]);
 	glUniform3f(m_uniforms[2], 0.0f, 0.0f, 1.0f);
+}
+
+void Shader::Update(glm::mat4 mM, glm::mat4 viewM, glm::mat4 projM, const Transform& transform, const Camera& camera,
+	glm::vec3 Rin, glm::vec3 posDin, glm::vec4 ruberLightColorIn, glm::vec4 duoLightColorIn, float intensityRin, float intensityDin, glm::mat4 stat)
+{
+	glm::mat4 MVP = projM * viewM * mM;
+	glm::mat4 Normal = glm::mat4(1.0f); //transform.GetModel();
+	
+	glUniformMatrix4fv(m_uniforms[0], 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(statu, 1, GL_FALSE, &stat[0][0]);
+	glUniformMatrix4fv(m_uniforms[1], 1, GL_FALSE, &Normal[0][0]);
+	glUniform3f(m_uniforms[2], 0.0f, 0.0f, 1.0f);
+
+	/*
+	Ru = Rin;
+	posDu = posDin;
+	ruberLightColoru = ruberLightColorIn;
+	duoLightColoru = duoLightColorIn;
+	intensityRu = intensityRin;
+	intensityDu = intensityDin;
+	*/
+	glUniform3fv(dirDu, 1, glm::value_ptr(posDin));
+	glUniform3fv(dirRu, 1, glm::value_ptr(Rin));
+	
+	glUniform4fv(CRu, 1, glm::value_ptr(ruberLightColorIn));
+	glUniform4fv(CDu, 1, glm::value_ptr(duoLightColorIn));
+
+	glUniform1f(intensDu, intensityDin);
+	glUniform1f(intensRu, intensityRin);
+	
 }
 
 std::string Shader::LoadShader(const std::string& fileName)

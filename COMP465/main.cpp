@@ -302,7 +302,7 @@ void init(void) {
 	textureRuber = new Texture("./starFieldC.jpg");
 
 	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels, 2);
-	shaderUnum = new Shader("./basicShader");
+	shaderUnum = new Shader("./basicShaderUnum");
 	textureUnum = new Texture("./unum.jpg");
 
 	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels, 3);
@@ -339,7 +339,7 @@ void display(void) {
 
 
 	// update model matrix, set MVP, draw
-	for (int ia = 0; ia < nModels-numOBJ; ia++)
+	for (int ia = 0; ia < nModels - numOBJ; ia++)
 	{
 		if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids)
 		{
@@ -465,7 +465,7 @@ void display(void) {
 			else modelID = ia;
 			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia == 4 || ia == 5 || ia == 7)
+		else if (ia == 4 || ia == 5 || ia == 7 )
 		{
 			
 			glUseProgram(shaderProgram[0]);
@@ -564,11 +564,41 @@ void display(void) {
 	modelMatrix = shape[209]->getModelMatrix(209);
 	shaderRuber->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
 	meshRuber->Draw(vao, buffer, nModels, 1);
+
+	modelMatrix = shape[1]->getModelMatrix(1);
+	ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
+	rotationMatrix2 = glm::rotate(modelMatrix, 0.02f, glm::vec3(0, 1, 0));
+	translationMatrix2 = shape[1]->getModelMatrix(1);
+	duoModelMat = shape[3]->getModelMatrix(3);
+
+	//distances to each sun (already squared)
+	distanceToR = translationMatrix2[3][0] * translationMatrix2[3][0] +
+		translationMatrix2[3][1] * translationMatrix2[3][1] +
+		translationMatrix2[3][2] * translationMatrix2[3][2];
+	distanceToR *= lightMitigator; //give ruber more intensity
+
+	distanceToD = (translationMatrix2[3][0] - duoModelMat[3][0])*(translationMatrix2[3][0] - duoModelMat[3][0]) +
+		(translationMatrix2[3][1] - duoModelMat[3][1])*(translationMatrix2[3][1] - duoModelMat[3][1]) +
+		(translationMatrix2[3][2] - duoModelMat[3][2])*(translationMatrix2[3][2] - duoModelMat[3][2]);
+
+
+	// light intensity is proportional to the inverse sqare of distance
+	intensityR = (float)1 / distanceToR;
+	intensityD = (float)1 / distanceToD;
+
+	//fractional intensity
+	float sum = (intensityR + intensityD) / 3;
+
+	intensityR = intensityR / sum;
+	intensityD = intensityD / sum;
+	//normalised pointer vectors to Ruber and Duo
+	R = normalize(glm::vec3(-translationMatrix2[3][0], -translationMatrix2[3][1], -translationMatrix2[3][2]));
+	posD = normalize(glm::vec3(translationMatrix2[3][0] - duoModelMat[3][0], translationMatrix2[3][1]
+		- duoModelMat[3][1], translationMatrix2[3][2] - duoModelMat[3][2]));
 	
 	shaderUnum->Bind();
 	textureUnum->Bind();
-	modelMatrix = shape[1]->getModelMatrix(1);
-	shaderUnum->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+	shaderUnum->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera, R, posD, ruberLightColor, duoLightColor, intensityR, intensityD, rotationMatrix2);
 	meshUnum->Draw(vao, buffer, nModels, 2);
 
 	shaderDuo->Bind();

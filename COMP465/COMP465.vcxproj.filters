@@ -41,9 +41,6 @@
     <ClInclude Include="obj_loader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -63,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mesh.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -89,6 +89,12 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="basicShader.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="basicShaderUnum.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="basicShaderUnum.vs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
