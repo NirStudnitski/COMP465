@@ -35,16 +35,16 @@ public:
     bool hasUVs;
     bool hasNormals;
     
-    OBJModel(const std::string& fileName);
+    OBJModel(const std::string& fileName, bool isText);
     
     IndexedModel ToIndexedModel();
 private:
     unsigned int FindLastVertexIndex(const std::vector<OBJIndex*>& indexLookup, const OBJIndex* currentIndex, const IndexedModel& result);
-    void CreateOBJFace(const std::string& line);
+    void CreateOBJFace(const std::string& line, bool isText);
     
     glm::vec2 ParseOBJVec2(const std::string& line);
     glm::vec3 ParseOBJVec3(const std::string& line);
-    OBJIndex ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals);
+    OBJIndex ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals, bool isText);
 };
 
 #endif // OBJ_LOADER_H_INCLUDED

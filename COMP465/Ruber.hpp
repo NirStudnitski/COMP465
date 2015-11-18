@@ -156,6 +156,14 @@ public:
 				radians = glm::radians(0.05f);
 				
 				break;
+			case 212: // gravity
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(6, 6, 6));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1,1,0));
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 500.0, 1000.0f));
+				//orbit = false;
+
+				break;
 			
 			}
 		}
@@ -165,11 +173,13 @@ public:
 
 	glm::mat4 getModelMatrix(int i) {
 		
-		if (orbit == true) {
-			return(rotationMatrix * translationMatrix * scaleMatrix);
-		}
-		else
-			return(translationMatrix * rotationMatrix * scaleMatrix);
+		
+			if (orbit == true) {
+				return(rotationMatrix * translationMatrix * scaleMatrix);
+			}
+			else
+				return(translationMatrix * rotationMatrix * scaleMatrix);
+		
 			
 	}
 
@@ -184,6 +194,23 @@ public:
 
 		return rotationMatrix;
 
+	}
+
+	//texture updater
+	void update(int i, bool gravity,glm::vec3 eye)
+	{
+
+
+
+		
+		if (i == 212) //gravity
+		{
+			//translationMatrix = glm::translate(glm::mat4(), glm::vec3(eye.x, eye.y, eye.z-100.0f));
+
+			translationMatrix[3][0] = eye.x;
+			translationMatrix[3][1] = eye.y;
+			translationMatrix[3][2] = eye.z-100.0f;
+		}
 	}
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 

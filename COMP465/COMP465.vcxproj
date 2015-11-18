@@ -145,6 +145,8 @@
     <None Include="asteroid.tri" />
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
+    <None Include="basicShaderText.fs" />
+    <None Include="basicShaderText.vs" />
     <None Include="basicShaderUnum.fs" />
     <None Include="basicShaderUnum.vs" />
     <None Include="missile.tri" />

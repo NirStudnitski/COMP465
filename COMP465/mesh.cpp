@@ -16,14 +16,11 @@
 #include <iostream>
 #include <stdlib.h>
 
-Mesh::Mesh(const std::string& fileName, GLuint vao[], GLuint buffer[], int nModels, int meshIndex)
+Mesh::Mesh(const std::string& fileName, GLuint vao[], GLuint buffer[], int nModels, int meshIndex, bool isText)
 {
+    InitMesh(OBJModel(fileName, isText).ToIndexedModel(), vao, buffer, nModels, meshIndex);
 	
-	scaleMatrixM = glm::mat4(50);
-	rotationAxisM = glm::vec3(0, 1, 0);
-	
-	rotationMatrixM = glm::mat4();
-    InitMesh(OBJModel(fileName).ToIndexedModel(), vao, buffer, nModels, meshIndex);
+
 }
 
 glm::mat4 Mesh::getModelMatrix() {
@@ -42,7 +39,6 @@ void Mesh::InitMesh(const IndexedModel& model, GLuint vao[], GLuint buffer[], in
     m_numIndices = model.indices.size();
 
     glGenVertexArrays(1, &vao[nModels+meshIndex]);
-	
 	//glBindVertexArray(m_vertexArrayObject);
 	glBindVertexArray(vao[nModels + meshIndex]);
 	

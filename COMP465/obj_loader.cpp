@@ -10,18 +10,21 @@ static inline unsigned int ParseOBJIndexValue(const std::string& token, unsigned
 static inline float ParseOBJFloatValue(const std::string& token, unsigned int start, unsigned int end);
 static inline std::vector<std::string> SplitString(const std::string &s, char delim);
 
-OBJModel::OBJModel(const std::string& fileName)
+OBJModel::OBJModel(const std::string& fileName, bool isText)
 {
+	printf("\nhello obj loader");
 	hasUVs = false;
 	hasNormals = false;
     std::ifstream file;
     file.open(fileName.c_str());
-
+	
     std::string line;
     if(file.is_open())
     {
+		printf("\n file opened");
         while(file.good())
         {
+			
             getline(file, line);
         
             unsigned int lineLength = line.length();
@@ -42,7 +45,7 @@ OBJModel::OBJModel(const std::string& fileName)
                         this->vertices.push_back(ParseOBJVec3(line));
                 break;
                 case 'f':
-                    CreateOBJFace(line);
+                    CreateOBJFace(line, isText);
                 break;
                 default: break;
             };
@@ -50,8 +53,10 @@ OBJModel::OBJModel(const std::string& fileName)
     }
     else
     {
+		
         std::cerr << "Unable to load mesh: " << fileName << std::endl;
     }
+	printf("\n file loading done");
 }
 
 void IndexedModel::CalcNormals()
@@ -78,6 +83,7 @@ void IndexedModel::CalcNormals()
 
 IndexedModel OBJModel::ToIndexedModel()
 {
+	printf("\n OBJmodel to Indexed model");
     IndexedModel result;
     IndexedModel normalModel;
     
@@ -87,24 +93,32 @@ IndexedModel OBJModel::ToIndexedModel()
     
     for(unsigned int i = 0; i < numIndices; i++)
         indexLookup.push_back(&OBJIndices[i]);
-    
+	printf("\n OBJ model to indexed model: checkpoint 1");
     std::sort(indexLookup.begin(), indexLookup.end(), CompareOBJIndexPtr);
     
     std::map<OBJIndex, unsigned int> normalModelIndexMap;
     std::map<unsigned int, unsigned int> indexMap;
-    
+	printf("\n OBJ model to indexed model: checkpoint 2");
     for(unsigned int i = 0; i < numIndices; i++)
     {
         OBJIndex* currentIndex = &OBJIndices[i];
-        
+        if (i==0) printf("\n OBJ model to indexed model: checkpoint 2.1");
         glm::vec3 currentPosition = vertices[currentIndex->vertexIndex];
+		if (i == 0) printf("\n OBJ model to indexed model: checkpoint 2.2");
         glm::vec2 currentTexCoord;
+		if (i == 0) printf("\n OBJ model to indexed model: checkpoint 2.3");
         glm::vec3 currentNormal;
+		if (i == 0) printf("\n OBJ model to indexed model: checkpoint 2.4");
         
-        if(hasUVs)
-            currentTexCoord = uvs[currentIndex->uvIndex];
-        else
-            currentTexCoord = glm::vec2(0,0);
+		if (hasUVs) {
+			if (i == 0) printf("\n before has uvs");
+			currentTexCoord = uvs[currentIndex->uvIndex];
+			if (i==0) printf("\n has uvs");
+		}
+		else {
+			currentTexCoord = glm::vec2(0, 0);
+			if (i == 0) printf("\n has NOOO uvs");
+		}
             
         if(hasNormals)
             currentNormal = normals[currentIndex->normalIndex];
@@ -146,7 +160,7 @@ IndexedModel OBJModel::ToIndexedModel()
         result.indices.push_back(resultModelIndex);
         indexMap.insert(std::pair<unsigned int, unsigned int>(resultModelIndex, normalModelIndex));
     }
-    
+	printf("\n OBJ model to indexed model: checkpoint 3");
     if(!hasNormals)
     {
         normalModel.CalcNormals();
@@ -154,7 +168,7 @@ IndexedModel OBJModel::ToIndexedModel()
         for(unsigned int i = 0; i < result.positions.size(); i++)
             result.normals[i] = normalModel.normals[indexMap[i]];
     }
-    
+	printf("\n done with OBJ model to indexed model");
     return result;
 };
 
@@ -241,23 +255,23 @@ unsigned int OBJModel::FindLastVertexIndex(const std::vector<OBJIndex*>& indexLo
     return -1;
 }
 
-void OBJModel::CreateOBJFace(const std::string& line)
+void OBJModel::CreateOBJFace(const std::string& line, bool isText)
 {
     std::vector<std::string> tokens = SplitString(line, ' ');
 
-    this->OBJIndices.push_back(ParseOBJIndex(tokens[1], &this->hasUVs, &this->hasNormals));
-    this->OBJIndices.push_back(ParseOBJIndex(tokens[2], &this->hasUVs, &this->hasNormals));
-    this->OBJIndices.push_back(ParseOBJIndex(tokens[3], &this->hasUVs, &this->hasNormals));
+    this->OBJIndices.push_back(ParseOBJIndex(tokens[1], &this->hasUVs, &this->hasNormals, isText));
+    this->OBJIndices.push_back(ParseOBJIndex(tokens[2], &this->hasUVs, &this->hasNormals, isText));
+    this->OBJIndices.push_back(ParseOBJIndex(tokens[3], &this->hasUVs, &this->hasNormals, isText));
 
     if((int)tokens.size() > 4)
     {
-        this->OBJIndices.push_back(ParseOBJIndex(tokens[1], &this->hasUVs, &this->hasNormals));
-        this->OBJIndices.push_back(ParseOBJIndex(tokens[3], &this->hasUVs, &this->hasNormals));
-        this->OBJIndices.push_back(ParseOBJIndex(tokens[4], &this->hasUVs, &this->hasNormals));
+        this->OBJIndices.push_back(ParseOBJIndex(tokens[1], &this->hasUVs, &this->hasNormals, isText));
+        this->OBJIndices.push_back(ParseOBJIndex(tokens[3], &this->hasUVs, &this->hasNormals, isText));
+        this->OBJIndices.push_back(ParseOBJIndex(tokens[4], &this->hasUVs, &this->hasNormals, isText));
     }
 }
 
-OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals)
+OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals, bool isText)
 {
     unsigned int tokenLength = token.length();
     const char* tokenString = token.c_str();
@@ -277,7 +291,7 @@ OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* h
     vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');
     
     result.uvIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
-    *hasUVs = true;
+    if (!isText) *hasUVs = true;
     
     if(vertIndexEnd >= tokenLength)
         return result;

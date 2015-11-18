@@ -51,7 +51,7 @@ public:
 		glm::mat4 scaleMatrixM;
 		glm::mat4 translationMatrixM;
 		glm::vec3 rotationAxisM;
-    Mesh(const std::string& fileName, GLuint vao[], GLuint buffer[], int nModels , int meshIndex);
+    Mesh(const std::string& fileName, GLuint vao[], GLuint buffer[], int nModels , int meshIndex, bool isText);
 	
 	Mesh(Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices
 		, GLuint vao[], GLuint buffer[], int nModels, int meshIndex);

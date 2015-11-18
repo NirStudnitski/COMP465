@@ -88,6 +88,7 @@ Shader * shaderGrav;
 
 
 
+
 Camera * camera;
 Transform * transform;
 
@@ -299,25 +300,25 @@ void init(void) {
 	printf("number of models = %i", nModels);
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
-	mesh = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,0);
+	mesh = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,0, false);
 	shader = new Shader("./basicShader");
 	texture = new Texture("./ruberText2.jpg");
 
-	meshRuber = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,1);
+	meshRuber = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,1, false);
 	shaderRuber = new Shader("./basicShader");
 	textureRuber = new Texture("./starFieldC.jpg");
 
-	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 2);
+	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 2, false);
 	shaderUnum = new Shader("./basicShaderUnum");
 	textureUnum = new Texture("./unum.jpg");
 
-	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 3);
+	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 3, false);
 	shaderDuo = new Shader("./basicShader");
 	textureDuo = new Texture("./duo.jpg");
 
-	//textGrav = new Mesh("./gravity.obj", vao, buffer, nModels-numOBJ, 4);
-	//shaderGrav = new Shader("./basicShader");
-	//textureGrav = new Texture("./duo.jpg");
+	textGrav = new Mesh("./gravity.obj", vao, buffer, nModels-numOBJ, 4, true);
+	shaderGrav = new Shader("./basicShaderText");
+	
 
 
 	Transform transform;
@@ -625,6 +626,11 @@ void display(void) {
 	modelMatrix = shape[3]->getModelMatrix(3);
 	shaderDuo->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
 	meshDuo->Draw(vao, buffer, nModels-numOBJ, 3);
+
+	shaderGrav->Bind();
+	modelMatrix = shape[2]->getModelMatrix(0);
+	shaderGrav->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+	textGrav->Draw(vao, buffer, nModels - numOBJ, 4);
 	
 	glutSwapBuffers();
 	
@@ -654,8 +660,13 @@ void update(int i) {
 	missileSiteTrans = shape[7]->getTranslationMatrix(7);
 	warBTrans = shape[2]->getModelMatrix(2);
 	
-	for (int i = 0; i < nModels; i++)
+	for (int i = 0; i < nModels-numOBJ; i++)
 		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
+	for (int i = nModels - numOBJ; i < nModels; i++)
+	{
+		if (i < 212) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
+		else shape[i]->update(i, true, eye);
+	}
 	mesh->update();
 	meshRuber->update();
 	

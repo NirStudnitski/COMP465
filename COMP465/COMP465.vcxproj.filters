@@ -97,5 +97,11 @@
     <None Include="basicShaderUnum.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="basicShaderText.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="basicShaderText.vs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
