@@ -141,7 +141,7 @@ int Index = 0;  // global variable indexing into VBO arrays
 
 				// display state and "state strings" for title display
 				// window title strings
-char baseStr[100] = "Warbird: Nir and Megan! Press f, t, r for static views, and 1, 2, 3 to follow ship ";
+char baseStr[100] = "Warbird: Nir and Megan! ";
 char fpsStr[15], viewStr[15] = " front view";
 char titleStr[100];
 
@@ -331,6 +331,14 @@ void drawString(void * font, char *s) {
 
 	for (i = 0; i < strlen(s); i++)
 		glutBitmapCharacter(font, (int) s[i]);
+}
+
+void updateTitle() {
+	strcpy(titleStr, baseStr);
+	strcat(titleStr, viewStr);
+	strcat(titleStr, fpsStr);
+	// printf("title string = %s \n", titleStr);
+	glutSetWindowTitle(titleStr);
 }
 
 void display(void) {
@@ -613,8 +621,16 @@ void display(void) {
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
 	timeInterval = currentTime - lastTime;
+	if (timeInterval >= 1000) {
+		sprintf(fpsStr, " fps %4d", (int)(frameCount / (timeInterval / 1000.0f)));
+		lastTime = currentTime;
+		frameCount = 0;
+		updateTitle();
+	}
 	
 }
+
+
 
 // Animate scene objects by updating their transformation matrices
 // timerDelay = 40, or 25 updates / second
@@ -803,7 +819,7 @@ void keyboard(unsigned char key, int x, int y) {
 	
 	}
 		viewMatrix = glm::lookAt(eye, at, up);
-		//updateTitle();
+		updateTitle();
 	
 }
 void specialKey(int key, int x, int y) {
