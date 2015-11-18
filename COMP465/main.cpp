@@ -24,7 +24,7 @@ Megan Kim
 // Shapes
 const int nAsteroids = 200;
 const int nNonAstObj = 8; // number of non-asteroid objects
-const int numOBJ = 5; // number of OBJ meshes
+const int numOBJ = 6; // number of OBJ meshes
 const int nModels = nNonAstObj + nAsteroids + numOBJ;
 
 float roll = 0; //left and right keys
@@ -81,6 +81,12 @@ Texture * textureUnum;
 Mesh * meshDuo;
 Shader * shaderDuo;
 Texture * textureDuo;
+
+//texture meshes
+Mesh * textGrav;
+Shader * shaderGrav;
+
+
 
 Camera * camera;
 Transform * transform;
@@ -236,9 +242,9 @@ void init(void) {
 	shaderProgram[0] = loadShaders(vertexShaderFile[0], fragmentShaderFile[0]);
 	
 	
-	glGenVertexArrays(nModels, vao);
+	glGenVertexArrays(nModels-numOBJ, vao);
 	
-	glGenBuffers(nModels+3*numOBJ, buffer);
+	glGenBuffers(nModels-numOBJ, buffer);
 
 	for (int i = 0; i < nModels-numOBJ; i++)
 	{
@@ -293,21 +299,26 @@ void init(void) {
 	printf("number of models = %i", nModels);
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
-	mesh = new Mesh("./stars.obj", vao, buffer, nModels,0);
+	mesh = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,0);
 	shader = new Shader("./basicShader");
 	texture = new Texture("./ruberText2.jpg");
 
-	meshRuber = new Mesh("./stars.obj", vao, buffer, nModels,1);
+	meshRuber = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,1);
 	shaderRuber = new Shader("./basicShader");
 	textureRuber = new Texture("./starFieldC.jpg");
 
-	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels, 2);
+	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 2);
 	shaderUnum = new Shader("./basicShaderUnum");
 	textureUnum = new Texture("./unum.jpg");
 
-	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels, 3);
+	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 3);
 	shaderDuo = new Shader("./basicShader");
 	textureDuo = new Texture("./duo.jpg");
+
+	//textGrav = new Mesh("./gravity.obj", vao, buffer, nModels-numOBJ, 4);
+	//shaderGrav = new Shader("./basicShader");
+	//textureGrav = new Texture("./duo.jpg");
+
 
 	Transform transform;
 	Camera camera(eye, glm::radians(45.0f), (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0f, 10000.0f);
@@ -565,13 +576,13 @@ void display(void) {
 	texture->Bind();
 	modelMatrix = shape[0]->getModelMatrix(0);
 	shader->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
-	mesh->Draw(vao, buffer, nModels, 0);
+	mesh->Draw(vao, buffer, nModels-numOBJ, 0);
 	
 	shaderRuber->Bind();
 	textureRuber->Bind();
 	modelMatrix = shape[209]->getModelMatrix(209);
 	shaderRuber->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
-	meshRuber->Draw(vao, buffer, nModels, 1);
+	meshRuber->Draw(vao, buffer, nModels-numOBJ, 1);
 
 	modelMatrix = shape[1]->getModelMatrix(1);
 	ModelViewProjectionMatrix = projectionMatrix * viewMatrix * modelMatrix;
@@ -607,13 +618,13 @@ void display(void) {
 	shaderUnum->Bind();
 	textureUnum->Bind();
 	shaderUnum->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera, R, posD, ruberLightColor, duoLightColor, intensityR, intensityD, rotationMatrix2);
-	meshUnum->Draw(vao, buffer, nModels, 2);
+	meshUnum->Draw(vao, buffer, nModels-numOBJ, 2);
 
 	shaderDuo->Bind();
 	textureDuo->Bind();
 	modelMatrix = shape[3]->getModelMatrix(3);
 	shaderDuo->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
-	meshDuo->Draw(vao, buffer, nModels, 3);
+	meshDuo->Draw(vao, buffer, nModels-numOBJ, 3);
 	
 	glutSwapBuffers();
 	

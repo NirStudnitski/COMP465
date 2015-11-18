@@ -1,5 +1,5 @@
-﻿Build started 11/17/2015 7:44:01 PM.
-     1>Project "C:\Users\Megan\Documents\GitHub\COMP465\COMP465\COMP465.vcxproj" on node 2 (Build target(s)).
+﻿Build started 11/18/2015 11:58:07 AM.
+     1>Project "C:\Users\Lolipop\documents\visual studio 2015\Projects\COMP465\COMP465\COMP465.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
@@ -17,21 +17,21 @@
          GLM: GLM_GTC_matrix_transform extension included
          GLM: GLM_GTC_quaternion extension included
          GLM: GLM_GTC_type_ptr extension included
-     1>c:\users\megan\documents\github\comp465\comp465\ruber.hpp(298): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-     1>c:\users\megan\documents\github\comp465\comp465\ruber.hpp(306): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-     1>c:\users\megan\documents\github\comp465\comp465\ruber.hpp(307): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+     1>c:\users\lolipop\documents\visual studio 2015\projects\comp465\comp465\ruber.hpp(298): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+     1>c:\users\lolipop\documents\visual studio 2015\projects\comp465\comp465\ruber.hpp(306): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+     1>c:\users\lolipop\documents\visual studio 2015\projects\comp465\comp465\ruber.hpp(307): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
          GLM: GLM_GTX_transform extension included
-     1>c:\users\megan\documents\github\comp465\comp465\main.cpp(816): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+     1>c:\users\lolipop\documents\visual studio 2015\projects\comp465\comp465\main.cpp(827): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Megan\Documents\GitHub\COMP465\Debug\COMP465.exe" /INCREMENTAL /NOLOGO /LIBPATH:.\lib freeglut.lib glew32.lib glew32s.lib SDL2.lib SDL2main.lib SDL2test.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Megan\Documents\GitHub\COMP465\Debug\COMP465.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Megan\Documents\GitHub\COMP465\Debug\COMP465.lib" /MACHINE:X86 Debug\main.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Lolipop\documents\visual studio 2015\Projects\COMP465\Debug\COMP465.exe" /INCREMENTAL /NOLOGO /LIBPATH:.\lib freeglut.lib glew32.lib glew32s.lib SDL2.lib SDL2main.lib SDL2test.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Lolipop\documents\visual studio 2015\Projects\COMP465\Debug\COMP465.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Lolipop\documents\visual studio 2015\Projects\COMP465\Debug\COMP465.lib" /MACHINE:X86 Debug\main.obj
          Debug\mesh.obj
          Debug\obj_loader.obj
          Debug\shader.obj
          Debug\stb_image.obj
          Debug\texture.obj
-         COMP465.vcxproj -> C:\Users\Megan\Documents\GitHub\COMP465\Debug\COMP465.exe
-     1>Done Building Project "C:\Users\Megan\Documents\GitHub\COMP465\COMP465\COMP465.vcxproj" (Build target(s)).
+         COMP465.vcxproj -> C:\Users\Lolipop\documents\visual studio 2015\Projects\COMP465\Debug\COMP465.exe
+     1>Done Building Project "C:\Users\Lolipop\documents\visual studio 2015\Projects\COMP465\COMP465\COMP465.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.10
+Time Elapsed 00:00:01.76
