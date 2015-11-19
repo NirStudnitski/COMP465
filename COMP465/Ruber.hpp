@@ -16,6 +16,7 @@ private:
 	glm::vec3 rotationAxisPitch;
 	glm::vec3 rotationAxisRoll;
 	glm::vec3 selfRotationAxis;
+	glm::vec3 pos;
 	char * speedS = "blklk";
 
 
@@ -29,6 +30,7 @@ private:
 	glm::vec3 forceOnMissile;
 	
 	float distance;
+	float boundRadius;
 
 
 	float radians;
@@ -39,8 +41,12 @@ private:
 	
 
 public:
-
+	bool death;
+	bool missileFired;
+	int missiles;
+	int travel; //used for counting the distance the missile has traveled when fired
 	ruber(int number, int nAst) {
+		missiles = 0;
 		id = number;  
 		int random = rand()%200; 
 		float randomf = rand() / 1000.0f;
@@ -139,6 +145,8 @@ public:
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(0.0f, 0.0, 10000.0f));
 				orbit = false;
+				missileFired = false;
+				travel = 0;
 				break; 
 
 			case 7: //missile site for unum
@@ -159,9 +167,17 @@ public:
 			
 			}
 		}
+		death = false;
 	}
 
-	
+	float getBoundingRadius() {
+		return boundRadius;
+	}
+
+
+	glm::vec3 getPosition() {
+		return pos;
+	}
 
 	glm::mat4 getModelMatrix(int i) {
 		
@@ -184,6 +200,12 @@ public:
 
 		return rotationMatrix;
 
+	}
+
+	void warping(glm::mat4 transMatrix, glm::mat4 rotMatrix) {
+		glm::mat4 translation = glm::translate(glm::mat4(), glm::vec3(0, 200.0f, 0));
+		translationMatrix = rotMatrix * transMatrix * translation;
+		rotationMatrix = glm::rotate(glm::mat4(), PI / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 
