@@ -157,11 +157,12 @@ public:
 				
 				break;
 			case 212: // gravity
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(6, 6, 6));
-				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1,1,0));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1,0,0));
+				
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 500.0, 1000.0f));
-				//orbit = false;
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
 
 				break;
 			
@@ -172,14 +173,15 @@ public:
 	
 
 	glm::mat4 getModelMatrix(int i) {
-		
-		
-			if (orbit == true) {
-				return(rotationMatrix * translationMatrix * scaleMatrix);
-			}
-			else
-				return(translationMatrix * rotationMatrix * scaleMatrix);
-		
+
+		if (i != 212) {
+		if (orbit == true) {
+			return(rotationMatrix * translationMatrix * scaleMatrix);
+		}
+		else
+			return(translationMatrix * rotationMatrix * scaleMatrix);
+	}
+	else return translationMatrix;
 			
 	}
 
@@ -196,23 +198,79 @@ public:
 
 	}
 
-	//texture updater
-	void update(int i, bool gravity,glm::vec3 eye)
+	//text update
+	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up)
 	{
-
-
+		
 
 		
 		if (i == 212) //gravity
 		{
-			//translationMatrix = glm::translate(glm::mat4(), glm::vec3(eye.x, eye.y, eye.z-100.0f));
+			glm::vec3 atN = glm::normalize(at);
+			glm::vec3 upN = glm::normalize(up);
+			glm::vec3 towards = glm::normalize(eye- at);
+			glm::vec3 rightN = glm::cross(upN, towards);
 
-			translationMatrix[3][0] = eye.x;
-			translationMatrix[3][1] = eye.y;
-			translationMatrix[3][2] = eye.z-100.0f;
+			float rightOffset = -75.0f;
+			float upOffset = -40.0f;
+			translationMatrix[3][0] = eye.x - towards.x*100.0f+rightN.x*rightOffset+ upN.x*upOffset;
+			translationMatrix[3][1] = eye.y - towards.y*100.0f+rightN.y*rightOffset + upN.y*upOffset;
+			translationMatrix[3][2] = eye.z - towards.z*100.0f+rightN.z*rightOffset + upN.z*upOffset;
+			
+			
+			translationMatrix[2][0] = 0;
+			translationMatrix[2][1] =0;
+			translationMatrix[2][2] = 0;
+			
+			translationMatrix[1][0] = upN.x;
+			translationMatrix[1][1] = upN.y;
+			translationMatrix[1][2] = upN.z;
+
+			translationMatrix[0][0] = rightN.x;
+			translationMatrix[0][1] = rightN.y;
+			translationMatrix[0][2] = rightN.z;
+			
+
+			
 		}
 	}
 
+
+
+	//warbird update only
+	void update(int i, double t, int nAst, float roll, float thrust, float pitch,
+		glm::mat4 unumTrans, glm::mat4 duoTrans, glm::mat4 missileSiteTrans, glm::mat4 warBTrans, float timeOfShot, bool planetGravity)
+
+	{
+
+
+		//roll and pitch
+		rotationAxisPitch = glm::vec3(translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2]);
+		rotationAxisRoll = glm::vec3(translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2]);
+		rotationMatrix = glm::rotate(rotationMatrix, pitch, rotationAxisPitch);
+		rotationMatrix = glm::rotate(rotationMatrix, roll, rotationAxisRoll);
+
+		//thrust
+		for (int i = 0; i < 3; i++) // move in the direction of 'at' times thrust
+			translationMatrix[3][i] -= rotationMatrix[2][i] * thrust;
+
+		if (planetGravity)
+		{
+			float ruberMass = 1000, duoMass = 100, unumMass = 200;
+			glm::vec3 toRuber = glm::vec3(warBTrans[3][0], warBTrans[3][1], warBTrans[3][2]);
+			glm::vec3 toUnum = glm::vec3(warBTrans[3][0] - unumTrans[3][0], warBTrans[3][1] - unumTrans[3][1], warBTrans[3][2] - unumTrans[3][1]);
+			glm::vec3 toDuo = glm::vec3(warBTrans[3][0] - duoTrans[3][0], warBTrans[3][1] - duoTrans[3][1], warBTrans[3][2] - duoTrans[3][2]);
+			float inverseD2RuberSquared = 1.0f / glm::dot(toRuber, toRuber);
+			float inverseD2UnumSquared = 1.0f / glm::dot(toUnum, toUnum);
+			float inverseD2DuoSquared = 1.0f / glm::dot(toDuo, toDuo);
+
+			glm::vec3 grav = toRuber*ruberMass*inverseD2RuberSquared + toUnum*unumMass*inverseD2UnumSquared + toDuo*duoMass*inverseD2DuoSquared;
+			translationMatrix[3][0] -= grav.x;
+			translationMatrix[3][1] -= grav.y;
+			translationMatrix[3][2] -= grav.z;
+
+		}
+	}
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 
 				glm::mat4 unumTrans, glm::mat4 missileSiteTrans, glm::mat4 warBTrans, float timeOfShot) 
 	{
@@ -237,26 +295,11 @@ public:
 			translationMatrix[3][1] += velocity.y;
 			translationMatrix[3][2] += velocity.z;
 
-
-			
-
-
 		}
 
 
-		else if (i == 2) //warbird
-		{
-			
-			//roll and pitch
-			rotationAxisPitch = glm::vec3(translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2]);
-			rotationAxisRoll = glm::vec3(translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2]);
-			rotationMatrix = glm::rotate(rotationMatrix, pitch, rotationAxisPitch);
-			rotationMatrix = glm::rotate(rotationMatrix, roll, rotationAxisRoll);
-
-			//thrust
-			for (int i = 0; i < 3; i++) // move in the direction of 'at' times thrust
-				translationMatrix[3][i] -= rotationMatrix[2][i] * thrust;
-		}
+		
+		
 		else if (i == 4) // moon orbiting duo
 		{
 			double sAmp = sin(t / 1600);

@@ -65,7 +65,7 @@ void Mesh::InitMesh(const IndexedModel& model, GLuint vao[], GLuint buffer[], in
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(model.indices[0]) * model.indices.size(), &model.indices[0], GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
-	printf("\n%i mesh done uploading", meshIndex);
+	
 }
 
 Mesh::Mesh(Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices

@@ -140,8 +140,8 @@ glm::vec4 diffuseColorMaterial[];
 //locations informations send to update
 glm::mat4 warBTrans = glm::mat4();
 glm::mat4 missileSiteTrans = glm::mat4();
-glm::mat4 unumTrans = glm::mat4();
-
+glm::mat4 unumTrans = glm::mat4(), duoTrans;
+bool planetGravity = true;
 
 float boundingRadius[nModels];  
 int Index = 0;  // global variable indexing into VBO arrays
@@ -628,7 +628,7 @@ void display(void) {
 	meshDuo->Draw(vao, buffer, nModels-numOBJ, 3);
 
 	shaderGrav->Bind();
-	modelMatrix = shape[2]->getModelMatrix(0);
+	modelMatrix = shape[212]->getModelMatrix(0);
 	shaderGrav->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
 	textGrav->Draw(vao, buffer, nModels - numOBJ, 4);
 	
@@ -659,16 +659,9 @@ void update(int i) {
 	unumTrans = shape[1]->getTranslationMatrix(1);
 	missileSiteTrans = shape[7]->getTranslationMatrix(7);
 	warBTrans = shape[2]->getModelMatrix(2);
+	duoTrans = shape[3]->getTranslationMatrix(3);
 	
-	for (int i = 0; i < nModels-numOBJ; i++)
-		shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
-	for (int i = nModels - numOBJ; i < nModels; i++)
-	{
-		if (i < 212) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
-		else shape[i]->update(i, true, eye);
-	}
-	mesh->update();
-	meshRuber->update();
+	
 	
 	 //die-down of roll and pitch
 	 if (pitch < 0)
@@ -693,9 +686,10 @@ void update(int i) {
 		 else roll -= 0.001f;
 	 }
 	
-	
-	 // camera tracks ship:
-	
+	 float correction;
+	 glm::vec3 right;
+	 glm::vec3 upTemp;
+
 		 switch(trackShip)
 	 {
 		 case 1: //warbird view
@@ -706,14 +700,17 @@ void update(int i) {
 			 eye = glm::vec3(behindShipView[3][0], behindShipView[3][1] + 100, behindShipView[3][2] + 250);
 			 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
 			 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
+			 upTemp = eye - at;
+			 right = glm::cross(upTemp, up);
+			 up = glm::normalize(glm::cross(right, upTemp));
 			 strcpy(viewStr, " Ship View");
 			 viewMatrix = glm::lookAt(eye, at, up);
 
-		  break;
-		case 2: //behind ship view
-	 
-		 
 
+		  break;
+
+	case 2: //behind ship view
+	 
 		 behindShipView = shape[2]->getModelMatrix(2);
 
 		 eye = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 10, behindShipView[3][1] + behindShipView[2][1] * 10, behindShipView[3][2] + behindShipView[2][2] * 10);
@@ -724,12 +721,12 @@ void update(int i) {
 	 break;
 	case 3: //cokpit view
 	
-
+		if (thrust < 0) correction = 1 - thrust / 10;
+		else correction = 1 + thrust / 10;
 
 		behindShipView = shape[2]->getModelMatrix(2);
-
-		eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 3, behindShipView[3][1] - behindShipView[2][1] * 3, behindShipView[3][2] - behindShipView[2][2] * 3);
-		at = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 4, behindShipView[3][1] - behindShipView[2][1] * 4, behindShipView[3][2] - behindShipView[2][2] * 4);
+		eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 3* correction, behindShipView[3][1] - behindShipView[2][1] * 3 * correction, behindShipView[3][2] - behindShipView[2][2] * 3 * correction);
+		at = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 4 * correction, behindShipView[3][1] - behindShipView[2][1] * 4 * correction, behindShipView[3][2] - behindShipView[2][2] * 4 * correction);
 		up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
 		strcpy(viewStr, " cockpit View");
 		viewMatrix = glm::lookAt(eye, at, up);
@@ -747,7 +744,7 @@ void update(int i) {
 	case 5: //Duo view
 		behindShipView = shape[3]->getModelMatrix(3);
 		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 400.0f, behindShipView[3].z);
-		at = glm::vec3(behindShipView[3].x, 0.0f, behindShipView[3].z);
+		at = glm::vec3(behindShipView[3].x, behindShipView[3].y, behindShipView[3].z);
 		up = glm::vec3(0.0f, 0.0f, -1.0f);
 		strcpy(viewStr, " Duo View");
 		viewMatrix = glm::lookAt(eye, at, up);
@@ -757,7 +754,7 @@ void update(int i) {
 		// initially use a front view
 		eye = glm::vec3(0.0f, 800.0f, 2000.0f);  
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
-		up = glm::vec3(0.0f, 1.0f, 0.0f);  
+		up = -glm::normalize(glm::cross((glm::vec3(1.0f, 0.0f, 0.0f)), eye));  
 		viewMatrix = glm::lookAt(eye, at, up);
 		strcpy(viewStr, " initial view");
 		break;
@@ -765,7 +762,7 @@ void update(int i) {
 	case 7:
 		eye = glm::vec3(0.0f, 500.0f, 2000.0f);  
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
-		up = glm::vec3(0.0f, 1.0f, 0.0f);  
+		up = -glm::normalize(glm::cross((glm::vec3(1.0f, 0.0f, 0.0f)), eye));
 		viewMatrix = glm::lookAt(eye, at, up);
 		strcpy(viewStr, " front view");
 		break;
@@ -773,7 +770,7 @@ void update(int i) {
 	case 8:
 		eye = glm::vec3(1000.0f, 250.0f, 0.0f);   
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   
-		up = glm::vec3(0.0f, 1.0f, 0.0f);   
+		up = -glm::normalize(glm::cross((glm::vec3(0.0f, 0.0f, -1.0f)), eye));
 		viewMatrix = glm::lookAt(eye, at, up);
 		strcpy(viewStr, " right view");
 		break;
@@ -785,8 +782,18 @@ void update(int i) {
 		strcpy(viewStr, " top view");
 		viewMatrix = glm::lookAt(eye, at, up);
 		break;
-}
-	
+	}
+
+		 for (int i = 0; i < nModels - numOBJ; i++)
+		 {
+			 if (i!=2) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
+			 else shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, duoTrans, missileSiteTrans, warBTrans, timeOfShot, planetGravity);
+		 }
+	for (int i = nModels - numOBJ; i < nModels; i++)
+	{
+		 if (i < 212) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
+		 else shape[i]->update(i, true, eye, at, up);
+	 }
 }
 
 // Quit or set the view
@@ -804,7 +811,9 @@ void keyboard(unsigned char key, int x, int y) {
 		trackShip = 9;
 		 break;
 
-		
+	case 'g': case 'G':  // planet gravity
+		planetGravity = !planetGravity;
+		break;
 	case 'v': case 'V':  // toggle view
 		if (trackShip!=9) trackShip++;
 		else trackShip = 1;

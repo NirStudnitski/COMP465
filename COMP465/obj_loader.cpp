@@ -12,7 +12,7 @@ static inline std::vector<std::string> SplitString(const std::string &s, char de
 
 OBJModel::OBJModel(const std::string& fileName, bool isText)
 {
-	printf("\nhello obj loader");
+	
 	hasUVs = false;
 	hasNormals = false;
     std::ifstream file;
@@ -21,7 +21,7 @@ OBJModel::OBJModel(const std::string& fileName, bool isText)
     std::string line;
     if(file.is_open())
     {
-		printf("\n file opened");
+		
         while(file.good())
         {
 			
@@ -56,7 +56,7 @@ OBJModel::OBJModel(const std::string& fileName, bool isText)
 		
         std::cerr << "Unable to load mesh: " << fileName << std::endl;
     }
-	printf("\n file loading done");
+	
 }
 
 void IndexedModel::CalcNormals()
@@ -83,7 +83,7 @@ void IndexedModel::CalcNormals()
 
 IndexedModel OBJModel::ToIndexedModel()
 {
-	printf("\n OBJmodel to Indexed model");
+	
     IndexedModel result;
     IndexedModel normalModel;
     
@@ -93,31 +93,31 @@ IndexedModel OBJModel::ToIndexedModel()
     
     for(unsigned int i = 0; i < numIndices; i++)
         indexLookup.push_back(&OBJIndices[i]);
-	printf("\n OBJ model to indexed model: checkpoint 1");
+	
     std::sort(indexLookup.begin(), indexLookup.end(), CompareOBJIndexPtr);
     
     std::map<OBJIndex, unsigned int> normalModelIndexMap;
     std::map<unsigned int, unsigned int> indexMap;
-	printf("\n OBJ model to indexed model: checkpoint 2");
+	
     for(unsigned int i = 0; i < numIndices; i++)
     {
         OBJIndex* currentIndex = &OBJIndices[i];
-        if (i==0) printf("\n OBJ model to indexed model: checkpoint 2.1");
+       
         glm::vec3 currentPosition = vertices[currentIndex->vertexIndex];
-		if (i == 0) printf("\n OBJ model to indexed model: checkpoint 2.2");
+	
         glm::vec2 currentTexCoord;
-		if (i == 0) printf("\n OBJ model to indexed model: checkpoint 2.3");
+		
         glm::vec3 currentNormal;
-		if (i == 0) printf("\n OBJ model to indexed model: checkpoint 2.4");
+		
         
 		if (hasUVs) {
-			if (i == 0) printf("\n before has uvs");
+			
 			currentTexCoord = uvs[currentIndex->uvIndex];
-			if (i==0) printf("\n has uvs");
+			
 		}
 		else {
 			currentTexCoord = glm::vec2(0, 0);
-			if (i == 0) printf("\n has NOOO uvs");
+		
 		}
             
         if(hasNormals)
@@ -160,7 +160,7 @@ IndexedModel OBJModel::ToIndexedModel()
         result.indices.push_back(resultModelIndex);
         indexMap.insert(std::pair<unsigned int, unsigned int>(resultModelIndex, normalModelIndex));
     }
-	printf("\n OBJ model to indexed model: checkpoint 3");
+	
     if(!hasNormals)
     {
         normalModel.CalcNormals();
@@ -168,7 +168,7 @@ IndexedModel OBJModel::ToIndexedModel()
         for(unsigned int i = 0; i < result.positions.size(); i++)
             result.normals[i] = normalModel.normals[indexMap[i]];
     }
-	printf("\n done with OBJ model to indexed model");
+	
     return result;
 };
 
