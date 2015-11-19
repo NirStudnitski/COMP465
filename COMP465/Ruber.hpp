@@ -165,6 +165,42 @@ public:
 				orbit = false;
 
 				break;
+			case 213: // velocity
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+
+				break;
+			case 214: // missiles
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+
+				break;
+			case 215: // on
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+
+				break;
+			case 216: // off
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+
+				break;
 			
 			}
 		}
@@ -174,7 +210,7 @@ public:
 
 	glm::mat4 getModelMatrix(int i) {
 
-		if (i != 212) {
+		if (i <212 ) {
 		if (orbit == true) {
 			return(rotationMatrix * translationMatrix * scaleMatrix);
 		}
@@ -202,36 +238,81 @@ public:
 	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up)
 	{
 		
+		glm::vec3 atN = glm::normalize(at);
+		glm::vec3 upN = glm::normalize(up);
+		glm::vec3 towards = glm::normalize(eye - at);
+		glm::vec3 rightN = glm::cross(upN, towards);
+		float rightOffset, upOffset;
 
+		translationMatrix[3][0] = eye.x - towards.x*100.0f;
+		translationMatrix[3][1] = eye.y - towards.y*100.0f;
+		translationMatrix[3][2] = eye.z - towards.z*100.0f;
+
+		translationMatrix[2][0] = 0;
+		translationMatrix[2][1] = 0;
+		translationMatrix[2][2] = 0;
+
+		translationMatrix[1][0] = upN.x;
+		translationMatrix[1][1] = upN.y;
+		translationMatrix[1][2] = upN.z;
+
+		translationMatrix[0][0] = rightN.x;
+		translationMatrix[0][1] = rightN.y;
+		translationMatrix[0][2] = rightN.z;
 		
-		if (i == 212) //gravity
+		switch (i)
 		{
-			glm::vec3 atN = glm::normalize(at);
-			glm::vec3 upN = glm::normalize(up);
-			glm::vec3 towards = glm::normalize(eye- at);
-			glm::vec3 rightN = glm::cross(upN, towards);
+			case 212: //gravity
+			
+				rightOffset = -75.0f;
+				upOffset = -40.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
 
-			float rightOffset = -75.0f;
-			float upOffset = -40.0f;
-			translationMatrix[3][0] = eye.x - towards.x*100.0f+rightN.x*rightOffset+ upN.x*upOffset;
-			translationMatrix[3][1] = eye.y - towards.y*100.0f+rightN.y*rightOffset + upN.y*upOffset;
-			translationMatrix[3][2] = eye.z - towards.z*100.0f+rightN.z*rightOffset + upN.z*upOffset;
-			
-			
-			translationMatrix[2][0] = 0;
-			translationMatrix[2][1] =0;
-			translationMatrix[2][2] = 0;
-			
-			translationMatrix[1][0] = upN.x;
-			translationMatrix[1][1] = upN.y;
-			translationMatrix[1][2] = upN.z;
+				break;
 
-			translationMatrix[0][0] = rightN.x;
-			translationMatrix[0][1] = rightN.y;
-			translationMatrix[0][2] = rightN.z;
-			
+			case 213: //velocity
 
-			
+				rightOffset = -75.0f;
+				upOffset = -30.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
+
+			case 214: //missiles
+
+				rightOffset = -75.0f;
+				upOffset = -20.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
+
+			case 215: //on
+
+				rightOffset = -55.0f;
+				if (!gravity) rightOffset -= 100;
+				upOffset = -40.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
+
+			case 216: //off
+
+				rightOffset = -55.0f;
+				if (gravity) rightOffset -= 100;
+				upOffset = -40.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
 		}
 	}
 
