@@ -19,8 +19,6 @@ private:
 	glm::vec3 pos;
 	char * speedS = "blklk";
 
-	const float PI = 3.14159f;
-
 
 	// for unum's eliptical orbit calculations
 	glm::vec3 velocity = glm::vec3(0.0f, 5.0f, 10.0f); //unum's initial velocity
@@ -104,7 +102,7 @@ public:
 				break;
 
 			case 2: //warbird
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, 20));
 				rotationAxis = glm::vec3(1, 0,0 );
 				radians = glm::radians(-1.8f);
 				
@@ -197,11 +195,6 @@ public:
 			return translationMatrix;
 
 	}
-
-	void setTranslationMat(glm::mat4 tMatrix) {
-		translationMatrix = tMatrix;
-	}
-	
 	glm::mat4 getRotationMatrix(int i) {
 
 
@@ -210,9 +203,9 @@ public:
 	}
 
 	void warping(glm::mat4 transMatrix, glm::mat4 rotMatrix) {
-		glm::mat4 translation = glm::translate(glm::mat4(), glm::vec3(0, 400.0f, 0));
+		glm::mat4 translation = glm::translate(glm::mat4(), glm::vec3(0, 200.0f, 0));
 		translationMatrix = rotMatrix * transMatrix * translation;
-		rotationMatrix = glm::rotate(glm::mat4(), -PI / 2, glm::vec3(1.0f, 0.0f, 0.0f));
+		rotationMatrix = glm::rotate(glm::mat4(), PI / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 
