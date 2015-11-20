@@ -77,6 +77,15 @@ public:
 			translationMatrix = glm::translate(glm::mat4(),
 				glm::vec3((500+ random)* cos(randomf), 0.0f, (500 + random)* sin(randomf)));
 		}
+		else if (number > 211)
+		{
+			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+			rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+			translationMatrix = glm::translate(glm::mat4(),
+				glm::vec3(0, 200.0, 1300.0f));
+			orbit = false;
+		}
 		else
 		{
 			switch (number) {
@@ -156,51 +165,7 @@ public:
 				radians = glm::radians(0.05f);
 				
 				break;
-			case 212: // gravity
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
-				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1,0,0));
-				
-				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 200.0, 1300.0f));
-				orbit = false;
-
-				break;
-			case 213: // velocity
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
-				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
-
-				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 200.0, 1300.0f));
-				orbit = false;
-
-				break;
-			case 214: // missiles
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
-				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
-
-				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 200.0, 1300.0f));
-				orbit = false;
-
-				break;
-			case 215: // on
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
-				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
-
-				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 200.0, 1300.0f));
-				orbit = false;
-
-				break;
-			case 216: // off
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
-				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
-
-				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 200.0, 1300.0f));
-				orbit = false;
-
-				break;
+			
 			
 			}
 		}
@@ -235,7 +200,7 @@ public:
 	}
 
 	//text update
-	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up)
+	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up, int missilesFired)
 	{
 		
 		glm::vec3 atN = glm::normalize(at);
@@ -259,8 +224,19 @@ public:
 		translationMatrix[0][0] = rightN.x;
 		translationMatrix[0][1] = rightN.y;
 		translationMatrix[0][2] = rightN.z;
+
+		if (i >= 217 && i < 227)
+		{
+			int missileIndex = i - 217;
+			if (10 - missilesFired < missileIndex) missileIndex += 1000;
+			rightOffset = -55.0f + 1*missileIndex;
+			upOffset = -20.0f;
+			translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+			translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+			translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+		}
 		
-		switch (i)
+		else switch (i)
 		{
 			case 212: //gravity
 			

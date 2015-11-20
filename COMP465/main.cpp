@@ -24,7 +24,7 @@ Megan Kim
 // Shapes
 const int nAsteroids = 200;
 const int nNonAstObj = 8; // number of non-asteroid objects
-const int numOBJ = 10; // number of OBJ meshes
+const int numOBJ = 20; // number of OBJ meshes
 const int nModels = nNonAstObj + nAsteroids + numOBJ;
 
 float roll = 0; //left and right keys
@@ -85,6 +85,9 @@ Texture * textureDuo;
 //texture meshes
 Mesh * textGrav, *textVel, *textMiss, *textOn, *textOff;
 Shader * shaderGrav, *shaderVel, *shaderMiss, *shaderOn, *shaderOff;
+
+Mesh *lllMesh[10];
+Shader *lllShader[10];
 
 
 
@@ -330,6 +333,12 @@ void init(void) {
 
 	textOff = new Mesh("./off.obj", vao, buffer, nModels - numOBJ, 8, true);
 	shaderOff = new Shader("./basicShaderText");
+
+	for (int i = 0; i < 10; i++)
+	{
+		lllMesh[i] = new Mesh("./lll.obj", vao, buffer, nModels - numOBJ, 9+i, true);
+		lllShader[i] = new Shader("./basicShaderText");
+	}
 	
 
 
@@ -663,6 +672,14 @@ void display(void) {
 	modelMatrix = shape[216]->getModelMatrix(0);
 	shaderOff->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
 	textOff->Draw(vao, buffer, nModels - numOBJ, 8);
+
+	for (int i = 0; i < 10; i++)
+	{
+		lllShader[i]->Bind();
+		modelMatrix = shape[217+i]->getModelMatrix(0);
+		lllShader[i]->Update(modelMatrix, viewMatrix, projectionMatrix, *transform, *camera);
+		lllMesh[i]->Draw(vao, buffer, nModels - numOBJ, 9+i);
+	}
 	
 	glutSwapBuffers();
 	
@@ -824,7 +841,7 @@ void update(int i) {
 	for (int i = nModels - numOBJ; i < nModels; i++)
 	{
 		 if (i < 212) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
-		 else shape[i]->update(i, planetGravity, eye, at, up);
+		 else shape[i]->update(i, planetGravity, eye, at, up, missilesFired);
 	 }
 }
 
