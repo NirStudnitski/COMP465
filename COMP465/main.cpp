@@ -145,7 +145,9 @@ char baseStr[100] = "Warbird: Nir and Megan! ";
 char fpsStr[15], viewStr[15] = " front view";
 char titleStr[100];
 
-char warp = 'u';
+char warp = 'z';
+glm::vec3 spherePos;
+glm::mat4 sphereOrientation;
 
 GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
@@ -763,7 +765,7 @@ void update(int i) {
 		 eye = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 10, behindShipView[3][1] + behindShipView[2][1] * 10, behindShipView[3][2] + behindShipView[2][2] * 10);
 		 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
 		 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
-		 strcpy(viewStr, " behind Ship View");
+		 strcpy(viewStr, " Behind Ship View");
 		 viewMatrix = glm::lookAt(eye, at, up);
 	 break;
 	case 3: //cokpit view
@@ -775,7 +777,7 @@ void update(int i) {
 		eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 3, behindShipView[3][1] - behindShipView[2][1] * 3, behindShipView[3][2] - behindShipView[2][2] * 3);
 		at = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 4, behindShipView[3][1] - behindShipView[2][1] * 4, behindShipView[3][2] - behindShipView[2][2] * 4);
 		up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
-		strcpy(viewStr, " cockpit View");
+		strcpy(viewStr, " Cockpit View");
 		viewMatrix = glm::lookAt(eye, at, up);
 	 break;
 
@@ -803,7 +805,7 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
 		up = glm::vec3(0.0f, 1.0f, 0.0f);  
 		viewMatrix = glm::lookAt(eye, at, up);
-		strcpy(viewStr, " initial view");
+		strcpy(viewStr, " Initial view");
 		break;
 
 	case 7:
@@ -811,7 +813,7 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
 		up = glm::vec3(0.0f, 1.0f, 0.0f);  
 		viewMatrix = glm::lookAt(eye, at, up);
-		strcpy(viewStr, " front view");
+		strcpy(viewStr, " Front view");
 		break;
 
 	case 8:
@@ -819,14 +821,14 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   
 		up = glm::vec3(0.0f, 1.0f, 0.0f);   
 		viewMatrix = glm::lookAt(eye, at, up);
-		strcpy(viewStr, " right view");
+		strcpy(viewStr, " Right view");
 		break;
 
 	case 9:
 		eye = glm::vec3(0.0f, 3000.0f, 0.0f);  
 		at = glm::vec3(0.0f, 0.0f, 0.0f);     
 		up = glm::vec3(0.0f, 0.0f, -1.0f);   
-		strcpy(viewStr, " top view");
+		strcpy(viewStr, " Top view");
 		viewMatrix = glm::lookAt(eye, at, up);
 		break;
 }
@@ -838,7 +840,7 @@ void keyboard(unsigned char key, int x, int y) {
 	
 	switch (key) {
 	case 033: case 'q':  case 'Q': exit(EXIT_SUCCESS); break;
-	case 'w': case 'W':  // front view
+	case 'j': case 'J':  // front view
 		trackShip = 7;
 		 break;
 	case 'r': case 'R':
@@ -847,7 +849,21 @@ void keyboard(unsigned char key, int x, int y) {
 	case 't': case 'T':  // top view
 		trackShip = 9;
 		 break;
-		
+	case 'w': case 'W':
+		switch (warp) {
+		case 'z': 
+			warp = 'x';
+			shape[2]->warping(shape[1]->getTranslationMatrix(1), shape[1]->getRotationMatrix(1));
+			break;
+		case 'x':
+			warp = 'z';
+			shape[2]->warping(shape[3]->getTranslationMatrix(3), shape[3]->getRotationMatrix(3));
+			break;
+		default: 
+			warp = 'z';
+			break;
+		}
+		break;
 	case 'v': case 'V':  // toggle view
 		if (trackShip!=9) trackShip++;
 		else trackShip = 1;
