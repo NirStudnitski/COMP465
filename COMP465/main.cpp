@@ -235,7 +235,9 @@ GLuint shaderHandle;
 // rotation variables
 glm::mat4 identity(1.0f);
 glm::mat4 rotation;
-int timerDelay = 40, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
+
+int timerDelay[4] = { 40, 100, 250, 500 }, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
+int timeQ;
 double currentTime, lastTime, timeInterval;
 float timeOfShot = -1.0f;
 int missilesFired = 0;
@@ -704,7 +706,7 @@ void display(void) {
 // timerDelay = 40, or 25 updates / second
 void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
-	glutTimerFunc(timerDelay, update, 1);
+	glutTimerFunc(timerDelay[4], update, 1);
 	
 	//update locations to be sent to update
 	unumTrans = shape[1]->getTranslationMatrix(1);
@@ -858,15 +860,19 @@ void keyboard(unsigned char key, int x, int y) {
 	case 'r': case 'R':
 		trackShip = 8;
 		 break;
-	case 't': case 'T':  // top view
+	case 'p': case 'P':  // top view
 		trackShip = 9;
 		 break;
+
+	case 't': case'T': //time quantum 
+		timeQ = (timeQ + 1) % 4;
+		break;
 
 	case 'g': case 'G':  // planet gravity
 		planetGravity = !planetGravity;
 		break;
 
-	case 'w': case 'W':
+	case 'w': case 'W': //warping
 		switch (warp) {
 		case 'z':
 			warp = 'x';
@@ -950,7 +956,7 @@ int main(int argc, char* argv[]) {
 	glutInitContextVersion(3, 3);
 	
 	glutInitContextProfile(GLUT_CORE_PROFILE);
-	glutCreateWindow("Warbird: Nir and Megan! Press {f, t, r} : front view");
+	glutCreateWindow("Warbird: Nir and Megan!: Initial View");
 	// initialize and verify glew
 	glewExperimental = GL_TRUE;  // needed my home system 
 	GLenum err = glewInit();
@@ -969,7 +975,7 @@ int main(int argc, char* argv[]) {
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	glutTimerFunc(timerDelay, update, 1);
+	glutTimerFunc(timerDelay[4], update, 1);
 	glutIdleFunc(display);
 	glutMainLoop();
 	printf("done\n");
