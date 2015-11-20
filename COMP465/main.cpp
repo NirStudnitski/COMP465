@@ -145,8 +145,6 @@ char baseStr[100] = "Warbird: Nir and Megan! ";
 char fpsStr[15], viewStr[15] = " front view";
 char titleStr[100];
 
-char warp = 'u';
-
 GLuint vPosition[nModels], vColor[nModels], vNormal[nModels];
 
 GLuint vao[nModels];  // VertexArrayObject
@@ -342,70 +340,6 @@ void updateTitle() {
 	// printf("title string = %s \n", titleStr);
 	glutSetWindowTitle(titleStr);
 }
-
-/*
-boolean checkForCollision(float bradius1, glm::vec3 pos1, float bradius2, glm::vec3 pos2) {
-	float dist = glm::distance(pos1, pos2);
-	return (dist - (bradius1 + bradius2) <= 0);
-}
-
-void collision() {
-	const int RUBER = 0, UNUM = 1, DUO = 2, PRIMUS = 3, SECUNDUS = 4, WARBIRD = 5, 
-		UNUM_SITE = 6, SECUNDUS_SITE = 7, PLAYER_MISSILE = 8, ENEMY_MISSILE = 9;
-	int warbirdObjects[8] = {RUBER, UNUM, DUO, PRIMUS, SECUNDUS, UNUM_SITE, SECUNDUS_SITE, ENEMY_MISSILE};
-	int missileSiteObjects[2] = {WARBIRD, PLAYER_MISSILE};
-	int playerMissileObjects[7] = {RUBER, DUO, PRIMUS, SECUNDUS, UNUM_SITE, SECUNDUS_SITE, ENEMY_MISSILE};
-	int enemyMissileObjects[5] = {RUBER, DUO, PRIMUS, WARBIRD, PLAYER_MISSILE};
-
-	for(int i = 0; i < 8; i++) {  // Check to see if the warbird has collided with an object.
-		if(checkForCollision(shape[WARBIRD]->getBoundingRadius(), shape[WARBIRD]->getPosition(),
-			shape[warbirdObjects[i]]->getBoundingRadius(),shape[warbirdObjects[i]]->getPosition()))
-		{
-			shape[WARBIRD]->death = true;
-		}
-	}
-	for(int i = 0; i < 2; i++) {
-		// Check if the Unum missile site has collided with an object.
-		if(checkForCollision(boundingRadius[UNUM_SITE], shape[UNUM_SITE]->getPosition(), shape[missileSiteObjects[i]]->getBoundingRadius(), shape[missileSiteObjects[i]]->getPosition()))
-		{
-			if(!(shape[PLAYER_MISSILE]->missileFired && missileSiteObjects[i] == PLAYER_MISSILE)) {	//If isn't missile nor missile is in flight
-			} else if(shape[WARBIRD]->death) {			//If warbird is dead
-			} else {
-				printf("Unum Missile Site Hit!\n");
-				shape[UNUM_SITE]->death = true;
-				shape[UNUM_SITE]->missiles = 0;
-			}
-		}
-		// Check if the Secundus missile site has collided with an object.
-		if(checkForCollision(boundingRadius[SECUNDUS_SITE], shape[SECUNDUS_SITE]->getPosition(), boundingRadius[WARBIRD], shape[missileSiteObjects[i]]->getPosition()) && shape[PLAYER_MISSILE]->inFlight)
-		{
-			if(!(shape[PLAYER_MISSILE]->missileFired && missileSiteObjects[i] == PLAYER_MISSILE)) {	//If isn't missile nor missile is in flight
-			} else if (shape[WARBIRD]->death) {			//If warbird is dead
-			} else {
-				printf("Secundus Missile Site Hit!\n");
-				shape[SECUNDUS_SITE]->death = true;
-				shape[SECUNDUS_SITE]->missiles = 0;
-			}
-		}
-	}
-
-	for(int i = 0; i < 7; i++) {  // Check if the player's missile has collided with an object.
-		if(checkForCollision(shape[PLAYER_MISSILE]->getBoundingRadius(), shape[PLAYER_MISSILE]->getPosition(), shape[playerMissileObjects[i]]->getBoundingRadius(), shape[playerMissileObjects[i]]->getPosition()) && shape[PLAYER_MISSILE]->traveled > 15)
-		{
-			shape[PLAYER_MISSILE]->death = false;
-			shape[PLAYER_MISSILE]->travel = 0;
-		}
-	}
-
-	for(int i = 0; i < 5; i++) {  // Check if the enemy missile has collided with an object.
-		if(checkForCollision(shape[ENEMY_MISSILE]->getBoundingRadius(), shape[ENEMY_MISSILE]->getPosition(), shape[enemyMissileObjects[i]]->getBoundingRadius(), shape[enemyMissileObjects[i]]->getPosition()) && shape[ENEMY_MISSILE]->traveled > 30)
-		{
-			shape[ENEMY_MISSILE]->death = false;
-			shape[PLAYER_MISSILE]->travel = 0;
-		}
-	}
-}
-*/
 
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -847,6 +781,7 @@ void keyboard(unsigned char key, int x, int y) {
 	case 't': case 'T':  // top view
 		trackShip = 9;
 		 break;
+
 		
 	case 'v': case 'V':  // toggle view
 		if (trackShip!=9) trackShip++;
@@ -887,8 +822,6 @@ void keyboard(unsigned char key, int x, int y) {
 		updateTitle();
 	
 }
-
-
 void specialKey(int key, int x, int y) {
 	switch (key)
 	{
