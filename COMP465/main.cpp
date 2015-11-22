@@ -9,7 +9,7 @@ Megan Kim
 */
 
 # define __Windows__ // define your target operating system
-# include "../includes465/include465.hpp" 
+# include "../includes465/include465.hpp"  
 # include <fstream>
 
 # include "Ruber.hpp"
@@ -238,7 +238,7 @@ glm::mat4 rotation;
 int timerDelay = 40, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
 double currentTime, lastTime, timeInterval;
 float timeOfShot = -1.0f;
-int missilesFired = 0;
+int missilesFired = 1;
 
 
 void init(void) {
