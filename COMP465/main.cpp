@@ -307,19 +307,19 @@ void init(void) {
 	printf("number of models = %i", nModels);
 	// create shape
 	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
-	mesh = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,0, false);
+	mesh = new Mesh("./sphere.obj", vao, buffer, nModels-numOBJ,0, false);
 	shader = new Shader("./basicShader");
 	texture = new Texture("./ruberText2.jpg");
 
-	meshRuber = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ,1, false);
+	meshRuber = new Mesh("./sphere.obj", vao, buffer, nModels-numOBJ,1, false);
 	shaderRuber = new Shader("./basicShader");
 	textureRuber = new Texture("./starFieldC.jpg");
 
-	meshUnum = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 2, false);
+	meshUnum = new Mesh("./deathS.obj", vao, buffer, nModels-numOBJ, 2, false);
 	shaderUnum = new Shader("./basicShaderUnum");
 	textureUnum = new Texture("./unum.jpg");
 
-	meshDuo = new Mesh("./stars.obj", vao, buffer, nModels-numOBJ, 3, false);
+	meshDuo = new Mesh("./sphere.obj", vao, buffer, nModels-numOBJ, 3, false);
 	shaderDuo = new Shader("./basicShader");
 	textureDuo = new Texture("./duo.jpg");
 
