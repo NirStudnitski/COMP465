@@ -152,7 +152,7 @@ int Index = 0;  // global variable indexing into VBO arrays
 				// display state and "state strings" for title display
 				// window title strings
 char baseStr[100] = "Warbird: Nir and Megan! ";
-char fpsStr[15], viewStr[15] = " front view";
+char fpsStr[15], upsStr[15], viewStr[15];
 char titleStr[100];
 
 char warp = 'z';
@@ -235,7 +235,9 @@ GLuint shaderHandle;
 // rotation variables
 glm::mat4 identity(1.0f);
 glm::mat4 rotation;
-int timerDelay = 40, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
+
+int timerDelay[4] = { 40, 100, 250, 500 }, frameCount = 0;  // A delay of 40 milliseconds is 25 updates / second
+int timeQ = 0;
 double currentTime, lastTime, timeInterval;
 float timeOfShot = -1.0f;
 int missilesFired = 1;
@@ -691,6 +693,7 @@ void display(void) {
 	timeInterval = currentTime - lastTime;
 	if (timeInterval >= 1000) {
 		sprintf(fpsStr, " fps %4d", (int)(frameCount / (timeInterval / 1000.0f)));
+		sprintf(upsStr, " timeQuantum %i", (timerDelay[timeQ]));
 		lastTime = currentTime;
 		frameCount = 0;
 		updateTitle();
@@ -704,7 +707,7 @@ void display(void) {
 // timerDelay = 40, or 25 updates / second
 void update(int i) {
 	currentTime = glutGet(GLUT_ELAPSED_TIME);
-	glutTimerFunc(timerDelay, update, 1);
+	glutTimerFunc(timerDelay[timeQ], update, 1);
 	
 	//update locations to be sent to update
 	unumTrans = shape[1]->getTranslationMatrix(1);
@@ -807,7 +810,7 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
 		up = -glm::normalize(glm::cross((glm::vec3(1.0f, 0.0f, 0.0f)), eye));  
 		viewMatrix = glm::lookAt(eye, at, up);
-		strcpy(viewStr, " Initial view");
+		strcpy(viewStr, " ");
 		break;
 
 	case 7:
@@ -858,15 +861,19 @@ void keyboard(unsigned char key, int x, int y) {
 	case 'r': case 'R':
 		trackShip = 8;
 		 break;
-	case 't': case 'T':  // top view
+	case 'p': case 'P':  // top view
 		trackShip = 9;
 		 break;
+
+	case 't': case'T': //time quantum 
+		timeQ = (timeQ + 1) % 4;
+		break;
 
 	case 'g': case 'G':  // planet gravity
 		planetGravity = !planetGravity;
 		break;
 
-	case 'w': case 'W':
+	case 'w': case 'W': //warping
 		switch (warp) {
 		case 'z':
 			warp = 'x';
@@ -950,7 +957,7 @@ int main(int argc, char* argv[]) {
 	glutInitContextVersion(3, 3);
 	
 	glutInitContextProfile(GLUT_CORE_PROFILE);
-	glutCreateWindow("Warbird: Nir and Megan! Press {f, t, r} : front view");
+	glutCreateWindow("Warbird: Nir and Megan!");
 	// initialize and verify glew
 	glewExperimental = GL_TRUE;  // needed my home system 
 	GLenum err = glewInit();
@@ -969,7 +976,7 @@ int main(int argc, char* argv[]) {
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	glutTimerFunc(timerDelay, update, 1);
+	glutTimerFunc(timerDelay[timeQ], update, 1);
 	glutIdleFunc(display);
 	glutMainLoop();
 	printf("done\n");
