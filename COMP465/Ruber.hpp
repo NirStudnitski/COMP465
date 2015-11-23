@@ -80,12 +80,45 @@ public:
 		}
 		else if (number > 211)
 		{
-			scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
-			rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+			if (number == 227)
+			{
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 1, 1));
+				
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 820.0, 2000.0f));
+				orbit = false;
+			}
+			
+			else if (number == 229) //health bar
+			{
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 1, 1.5f));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
 
-			translationMatrix = glm::translate(glm::mat4(),
-				glm::vec3(0, 200.0, 1300.0f));
-			orbit = false;
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+			}
+
+			else if (number == 230) //speed bar
+			{
+				
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 1, 1.5f));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+		
+			}
+			else 
+			{
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 5, 5));
+				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
+
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0, 200.0, 1300.0f));
+				orbit = false;
+			}
 		}
 		else
 		{
@@ -111,7 +144,7 @@ public:
 				radians = glm::radians(-1.8f);
 				
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(0, 500.0, 1600.0f));
+					glm::vec3(0, 600.0, 1750.0f));
 				
 
 				orbit = false;
@@ -122,7 +155,7 @@ public:
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(radiansD);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(1200, 0.0f, 0.0f));
+					glm::vec3(-1200, 0.0f, 0.0f));
 				break;
 
 			case 4: //Duo's outer moon - suspended between duo and ruber
@@ -130,7 +163,7 @@ public:
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(radiansD);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(1100, 0.0f, 0.0f));
+					glm::vec3(-1100, 0.0f, 0.0f));
 				break;
 
 			case 5: //Duo's moon orbiting duo
@@ -138,7 +171,7 @@ public:
 				rotationAxis = glm::vec3(0, 1, 0);
 				radians = glm::radians(radiansD);
 				translationMatrix = glm::translate(glm::mat4(),
-					glm::vec3(1000, 0.0f, 0.0f));
+					glm::vec3(-1000, 0.0f, 0.0f));
 				break;
 
 			case 6: //missile
@@ -181,14 +214,12 @@ public:
 
 	glm::mat4 getModelMatrix(int i) {
 
-		if (i <212 ) {
-		if (orbit == true) {
-			return(rotationMatrix * translationMatrix * scaleMatrix);
+		if (i <212 || i==227 || i==230 || i==229) 
+		{
+			if (orbit) return(rotationMatrix * translationMatrix * scaleMatrix);
+			else return(translationMatrix * rotationMatrix * scaleMatrix);
 		}
-		else
-			return(translationMatrix * rotationMatrix * scaleMatrix);
-	}
-	else return translationMatrix;
+		else return translationMatrix;
 			
 	}
 
@@ -206,7 +237,7 @@ public:
 	}
 
 	//text update
-	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up, int missilesFired)
+	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up, int missilesFired, int health, float thrust)
 	{
 		
 		glm::vec3 atN = glm::normalize(at);
@@ -295,6 +326,40 @@ public:
 				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
 
 				break;
+
+			case 228: //health
+
+				rightOffset = -75.0f;
+				
+				upOffset = -10.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
+				
+			case 229: //health bar
+
+				rightOffset = -55.0f;
+				
+				upOffset = -8.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
+
+			case 230: //speed bar
+
+				rightOffset = -55.0f;
+				
+				upOffset = -28.0f;
+				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
+				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
+				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+
+				break;
+
 		}
 	}
 
@@ -367,7 +432,7 @@ public:
 		{
 			double sAmp = sin(t / 1600);
 			double cAmp = cos(t / 1600);
-			translationMatrix = glm::translate(glm::mat4(), glm::vec3(1200 + 100 * sAmp, 0.0f, 100 * cAmp));
+			translationMatrix = glm::translate(glm::mat4(), glm::vec3(-1200 + 100 * sAmp, 0.0f, 100 * cAmp));
 		}
 
 		else if (i >= nNonAstObj && i < nNonAstObj + nAst) // ateroids rotation around center
@@ -444,7 +509,7 @@ public:
 		}
 		if (i==3) translationMatrix = glm::rotate(translationMatrix, -0.03f, glm::vec3(0, 1, 0));
 
-		if (i != 2)	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
+		if (i != 2 )	rotationMatrix = glm::rotate(rotationMatrix, radians, rotationAxis);
 
 
 
