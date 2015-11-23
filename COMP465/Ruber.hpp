@@ -102,7 +102,7 @@ public:
 			else if (number == 230) //speed bar
 			{
 				
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 1, 1.5f));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.1f, 1, 1.5f));
 				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
 
 				translationMatrix = glm::translate(glm::mat4(),
@@ -175,7 +175,7 @@ public:
 				break;
 
 			case 6: //missile
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(30, 30, -30));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 20, -20));
 				rotationAxis = glm::vec3(1, 0, 0);
 				rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::vec3(1, 0, 0));
 				radians = glm::radians(0.0f);
@@ -350,14 +350,14 @@ public:
 				break;
 
 			case 230: //speed bar
-
-				rightOffset = -55.0f;
-				
+				if (thrust < 0) thrust *= -1;
+				rightOffset = -60.0f +thrust;
 				upOffset = -28.0f;
 				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
 				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
 				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
-
+				
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.1f+thrust, 1, 1.5f));
 				break;
 
 		}
@@ -448,7 +448,7 @@ public:
 					for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) translationMatrix[i][j] *= 0.04f;
 					
 					mVelocity = glm::vec3(0, 0, 0);
-					forceOnMissile = -0.1f * glm::vec3(warBTrans[2][0], warBTrans[2][1], warBTrans[2][2]);
+					forceOnMissile = -0.05f * glm::vec3(warBTrans[2][0], warBTrans[2][1], warBTrans[2][2]);
 					
 				}
 				else if (t < timeOfShot + 2000)
@@ -471,7 +471,7 @@ public:
 
 
 					mVelocity += forceOnMissile;
-					mVelocity = glm::normalize(mVelocity)*20.0f; //limit the magnitude of mVelocity
+					mVelocity = glm::normalize(mVelocity)*10.0f; //limit the magnitude of mVelocity
 
 					translationMatrix[3][0] += mVelocity.x;
 					translationMatrix[3][1] += mVelocity.y;
