@@ -91,7 +91,7 @@ public:
 			
 			else if (number == 229) //health bar
 			{
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(5, 1, 1.5f));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.1f, 1, 1.5f));
 				rotationMatrix = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0));
 
 				translationMatrix = glm::translate(glm::mat4(),
@@ -237,7 +237,7 @@ public:
 	}
 
 	//text update
-	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up, int missilesFired, int health, float thrust)
+	void update(int i, bool gravity, glm::vec3 eye, glm::vec3 at, glm::vec3 up, int missilesFired, float health, float thrust)
 	{
 		
 		glm::vec3 atN = glm::normalize(at);
@@ -335,17 +335,19 @@ public:
 				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
 				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
 				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+				
 
 				break;
 				
 			case 229: //health bar
 
-				rightOffset = -55.0f;
+				rightOffset = -60.0f + health;
 				
 				upOffset = -8.0f;
 				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
 				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
 				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.1f + health, 1, 1.5f));
 
 				break;
 

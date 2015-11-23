@@ -46,7 +46,7 @@ const int nFacetsAsteroid5 = 20;
 float lightMitigator = 0.4f;
 
 int trackShip = 6;
-int healthValue = 100;
+float healthValue = 5.0f;
 
 int modelID; // to be used in vertex, shader and and other arrays
 /*  0 = ruber
