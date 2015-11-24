@@ -80,9 +80,9 @@ public:
 		}
 		else if (number > 211)
 		{
-			if (number == 227)
+			if (number == 227) // laser
 			{
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(20, 1, 1));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(4, 4, 120));
 				
 				translationMatrix = glm::translate(glm::mat4(),
 					glm::vec3(0, 820.0, 2000.0f));
@@ -401,6 +401,28 @@ public:
 
 		}
 	}
+
+	// update for laser only
+	void update(float currentTime, float timeOfLastLaser, glm::mat4 unumTrans, glm::mat4 warBTrans, glm::vec3 unumToWB, glm::vec3 unumHoleLocation)
+	{
+		float laserDuration = currentTime - timeOfLastLaser;
+		float laserSpeed = 5.0f;
+		if (laserDuration < 500)
+		{
+			translationMatrix[2][0] = unumToWB.x;
+			translationMatrix[2][1] = unumToWB.y;
+			translationMatrix[2][2] = unumToWB.z;
+
+
+			translationMatrix[3][0] = unumHoleLocation.x + laserDuration * unumToWB.x*laserSpeed;
+			translationMatrix[3][1] = unumHoleLocation.y + laserDuration * unumToWB.y*laserSpeed;
+			translationMatrix[3][2] = unumHoleLocation.z + laserDuration * unumToWB.z*laserSpeed;
+		}
+		else translationMatrix[3][0] = 10000;
+			
+		
+	}
+
 	void update(int i, double t, int nAst, float roll, float thrust, float pitch, 
 				glm::mat4 unumTrans, glm::mat4 missileSiteTrans, glm::mat4 warBTrans, float timeOfShot) 
 	{

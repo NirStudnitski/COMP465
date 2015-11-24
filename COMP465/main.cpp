@@ -66,7 +66,7 @@ int modelID; // to be used in vertex, shader and and other arrays
 
 
 ruber * shape[nModels];
-char * speedS = "blalalalaCCCCC";//doesn't work yet
+
 Mesh * mesh;
 Shader * shader;
 Texture * texture;
@@ -97,6 +97,10 @@ Texture * textureLaser;
 
 Camera * camera;
 Transform * transform;
+
+bool armDeathStar = true; //when this is armed, death star will fire when facing the WB
+glm::vec3 unumToWB, unumHoleLocation, tempVec;
+float timeOfLastLaser = 0;
 
 // Model for shapes
 char * modelFile[] = 
@@ -884,6 +888,27 @@ void update(int i) {
 	for (int i = nModels - numOBJ; i < nModels; i++)
 	{
 		 if (i < 212 ) shape[i]->update(i, currentTime, nAsteroids, roll, thrust, pitch, unumTrans, missileSiteTrans, warBTrans, timeOfShot);
+		 else if (i == 227)
+		 {
+	
+			 if (armDeathStar) 
+			 {
+				
+				 unumTrans = shape[1]->getModelMatrix(1);
+				
+				 tempVec = -glm::normalize(glm::vec3(unumTrans[2][0], unumTrans[2][1], unumTrans[2][2]));
+				 unumHoleLocation = glm::vec3(missileSiteTrans[3][0], missileSiteTrans[3][1], missileSiteTrans[3][2]);
+				 unumToWB = -glm::normalize(glm::vec3(unumHoleLocation.x - warBTrans[3][0], unumHoleLocation.y - warBTrans[3][1], unumHoleLocation.z- warBTrans[3][2]));
+				 float angle = glm::dot(tempVec, unumToWB);
+				 if ( angle < 0.4f && angle > -0.4f) //the death star is pointing at the warbird
+				 {
+					 armDeathStar = false;
+					 timeOfLastLaser = currentTime;
+				 }
+			 }
+			 shape[i]->update(currentTime, timeOfLastLaser, unumTrans, warBTrans, unumToWB, unumHoleLocation);
+			 if (timeOfLastLaser < currentTime - 500) armDeathStar = true;
+		 }
 		 else shape[i]->update(i, planetGravity, eye, at, up, missilesFired, healthValue, thrust);
 	 }
 }
