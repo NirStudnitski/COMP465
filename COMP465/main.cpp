@@ -528,9 +528,11 @@ void display(void) {
 			glBindVertexArray(vao[ia]);
 			if (ia >= nNonAstObj && ia < nNonAstObj + nAsteroids) modelID = (ia - nNonAstObj) % 5 + nNonAstObj;
 			else modelID = ia;
-			glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
+
+			//if the warbird is out of health due to colisions or lasers, it will dissapear
+		if(healthValue >0)	glDrawArrays(GL_TRIANGLES, 0, nVertices[modelID]);
 		}
-		else if (ia == 4 || ia == 5 || ia == 7 )
+		else if (ia == 4 || ia == 5 )
 		{
 			
 			glUseProgram(shaderProgram[0]);
@@ -728,7 +730,7 @@ void display(void) {
 	}
 	
 	glutSwapBuffers();
-	
+	if (healthValue < 0) missilesFired = 10;
 	frameCount++;
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -895,12 +897,19 @@ void update(int i) {
 			 {
 				
 				 unumTrans = shape[1]->getModelMatrix(1);
-				
-				 tempVec = -glm::normalize(glm::vec3(unumTrans[2][0], unumTrans[2][1], unumTrans[2][2]));
+				 float distanceOfWBToMS =	 (missileSiteTrans[3][0] - warBTrans[3][0])*(missileSiteTrans[3][0] - warBTrans[3][0]) +
+											 (missileSiteTrans[3][1] - warBTrans[3][1])*(missileSiteTrans[3][1] - warBTrans[3][1]) +
+											 (missileSiteTrans[3][2] - warBTrans[3][2])*(missileSiteTrans[3][2] - warBTrans[3][2]);
+
+				 float distanceOfWBToUnum =	 (unumTrans[3][0] - warBTrans[3][0])*(unumTrans[3][0] - warBTrans[3][0]) +
+											 (unumTrans[3][1] - warBTrans[3][1])*(unumTrans[3][1] - warBTrans[3][1]) +
+											 (unumTrans[3][2] - warBTrans[3][2])*(unumTrans[3][2] - warBTrans[3][2]);
+
+			
 				 unumHoleLocation = glm::vec3(missileSiteTrans[3][0], missileSiteTrans[3][1], missileSiteTrans[3][2]);
 				 unumToWB = -glm::normalize(glm::vec3(unumHoleLocation.x - warBTrans[3][0], unumHoleLocation.y - warBTrans[3][1], unumHoleLocation.z- warBTrans[3][2]));
-				 float angle = glm::dot(tempVec, unumToWB);
-				 if ( angle < 0.4f && angle > -0.4f) //the death star is pointing at the warbird
+				
+				 if ( distanceOfWBToMS < distanceOfWBToUnum) //the death star is pointing at the warbird
 				 {
 					 armDeathStar = false;
 					 timeOfLastLaser = currentTime;
@@ -940,11 +949,13 @@ void keyboard(unsigned char key, int x, int y) {
 		switch (warp) {
 		case 'z':
 			warp = 'x';
-			shape[2]->warping(shape[1]->getTranslationMatrix(1), shape[1]->getRotationMatrix(1));
+			shape[2]->warping(shape[1]->getTranslationMatrix(1), 1, shape[2]->getModelMatrix(2));
+			trackShip = 2;
 			break;
 		case 'x':
 			warp = 'z';
-			shape[2]->warping(shape[3]->getTranslationMatrix(3), shape[3]->getRotationMatrix(3));
+			shape[2]->warping(shape[3]->getModelMatrix(3), -1, shape[2]->getModelMatrix(2));
+			trackShip = 2;
 			break;
 		default:
 			warp = 'z';

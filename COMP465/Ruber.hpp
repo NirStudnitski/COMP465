@@ -1,6 +1,6 @@
 # ifndef __INCLUDES465__
 # include "../includes465/include465.hpp"
-
+#include <cmath>
 # define __INCLUDES465__
 # endif
 
@@ -205,10 +205,26 @@ public:
 		}
 	}
 
-	void warping(glm::mat4 transMatrix, glm::mat4 rotMatrix) {
-		glm::mat4 translation = glm::translate(glm::mat4(), glm::vec3(0, 400.0f, 0));
-		translationMatrix = rotMatrix * transMatrix * translation;
-		rotationMatrix = glm::rotate(glm::mat4(), -PI / 2, glm::vec3(1.0f, 0.0f, 0.0f));
+	void warping(glm::mat4 transMatrix, float which, glm::mat4 modelMat) 
+	{
+		
+		//streighten out first
+		rotationMatrix = glm::mat4(1.0f);
+		glm::vec3 tempVec = glm::normalize(glm::cross(glm::vec3(transMatrix[3][0], transMatrix[3][1], transMatrix[3][2]), glm::vec3(0, 1, 0)));
+		float distance = 500*which;
+		translationMatrix[3][0] = transMatrix[3][0] + tempVec.x*distance;
+		translationMatrix[3][1] = transMatrix[3][1] + tempVec.y*distance;
+		translationMatrix[3][2] = transMatrix[3][2] + tempVec.z*distance;
+
+		tempVec =  glm::normalize(glm::vec3(translationMatrix[3][0] - transMatrix[3][0], translationMatrix[3][1] - transMatrix[3][1], translationMatrix[3][2] - transMatrix[3][2]));
+		glm::vec3 tempVec2 = glm::normalize(glm::vec3(rotationMatrix[2][0], rotationMatrix[2][1], rotationMatrix[2][2]));
+		float angle = std::acos(glm::dot(tempVec, tempVec2));
+		
+		//need to know if duo and unum are on the right or left of warbird
+		if (glm::cross(tempVec, tempVec2).y > 0) angle *= -1;
+		rotationMatrix = glm::rotate(rotationMatrix, angle, glm::vec3(0,1,0));
+		
+		
 	}
 	
 
@@ -341,13 +357,14 @@ public:
 				
 			case 229: //health bar
 
+				if (health < 0) health = 0;
 				rightOffset = -60.0f + health;
 				
 				upOffset = -8.0f;
 				translationMatrix[3][0] += rightN.x*rightOffset + upN.x*upOffset;
 				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
 				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.1f + health, 1, 1.5f));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.001f + health, 1, 1.5f));
 
 				break;
 
@@ -359,7 +376,7 @@ public:
 				translationMatrix[3][1] += rightN.y*rightOffset + upN.y*upOffset;
 				translationMatrix[3][2] += rightN.z*rightOffset + upN.z*upOffset;
 				
-				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.1f+thrust, 1, 1.5f));
+				scaleMatrix = glm::scale(glm::mat4(), glm::vec3(0.001f+thrust, 1, 1.5f));
 				break;
 
 		}
@@ -517,16 +534,17 @@ public:
 		}
 		if (i == 7) // missile site for unum
 		{
-			float angle = -t / 2550.0f;
+			
+			float angle = -t / 2530.0f + 3.14;
 			double sAmp = sin(angle);
 			double cAmp = cos(angle);
 			translationMatrix = unumTrans;
 			
-			translationMatrix = glm::rotate(translationMatrix, -1.57f, glm::vec3(1,0,0));
-			translationMatrix = glm::rotate(translationMatrix, 3.14f, glm::vec3(0, 1, 0));
 			translationMatrix = glm::rotate(translationMatrix, -0.02f, glm::vec3(1, 0, 0));
-			translationMatrix[3][0] += 110 * cAmp;
-			translationMatrix[3][2] += 110 * sAmp;
+			translationMatrix[3][0] += 90 * cAmp;
+			translationMatrix[3][1] += 60;
+			translationMatrix[3][2] += 90 * sAmp;
+			glm::vec3 tempVec = glm::normalize(glm::vec3(translationMatrix[3][0] - warBTrans[3][0], translationMatrix[3][1] - warBTrans[3][1], translationMatrix[3][2] - warBTrans[3][2]));
 			
 
 			
