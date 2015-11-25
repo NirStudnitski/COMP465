@@ -100,6 +100,8 @@ Camera * camera;
 Transform * transform;
 
 bool armDeathStar = true; //when this is armed, death star will fire when facing the WB
+bool deathStarDestroyed = false;
+bool invincableMode = false;
 glm::vec3 unumToWB, unumHoleLocation, tempVec;
 float timeOfLastLaser = 0;
 
@@ -411,9 +413,9 @@ void checkCollision() {
 	float objDistance; //used to find distance between objects
 	
 	glm::vec3 objPos = getPosition(shape[2]->getOrientationMatrix()); //finding pos of warbird
-	if (shape[2] && checkForCollision) {
+	if (shape[2] && checkForCollision && !invincableMode) {
 		for (int i = 0; i < nNonAstObj; i++) { //checking for collision on all planets and moons
-			if (i != 2) {
+			if (i != 2 && i!=6) {
 				objDistance = distance(objPos, getPosition(shape[i]->getOrientationMatrix()));
 				if (objDistance < (radius[i] + radius[5] + 100)) {
 					checkForCollision = false;
@@ -428,6 +430,46 @@ void checkCollision() {
 		//for (int i = 0; i < ) //checking for all missiles/laser
 	}
 }
+
+void checkMissileCollision() {
+	float objDistance; //used to find distance between objects
+
+	glm::vec3 objPos = getPosition(shape[6]->getOrientationMatrix()); //finding pos of warbird
+	
+		for (int i = 0; i < nNonAstObj; i++) 
+		{ //checking for collision on all planets and moons
+			if (i == 7)
+			{
+				objDistance = distance(objPos, getPosition(shape[i]->getOrientationMatrix()));
+				if (objDistance < 40)
+				{
+					deathStarDestroyed = true;
+					timeOfShot = -1.0f;
+				}
+			}
+			else if (i != 2 && i!=6) 
+			{
+				objDistance = distance(objPos, getPosition(shape[i]->getOrientationMatrix()));
+				if (objDistance < 10)
+					timeOfShot = -1.0f;
+			}
+				
+			
+		}
+		
+	
+}
+
+void checkLaserCollision() 
+{
+	float objDistance; //used to find distance between objects
+
+	glm::vec3 objPos = getPosition(shape[227]->getOrientationMatrix()); //finding pos of warbird
+	objDistance = distance(objPos, getPosition(shape[2]->getOrientationMatrix()));
+	if (objDistance < 40) healthValue -= 0.2f;
+		
+}
+
 
 void updateTitle() {
 	strcpy(titleStr, baseStr);
@@ -769,7 +811,8 @@ void display(void) {
 	}
 	
 	glutSwapBuffers();
-	if (healthValue < 0) missilesFired = 10;
+	if (invincableMode) healthValue = 5.0f;
+	if (healthValue <= 0) missilesFired = 11;
 	frameCount++;
 	// see if a second has passed to set estimated fps information
 	currentTime = glutGet(GLUT_ELAPSED_TIME);  // get elapsed system time
@@ -799,6 +842,8 @@ void update(int i) {
 	duoTrans = shape[3]->getTranslationMatrix(3);
 	
 	checkCollision();
+	checkMissileCollision();
+	checkLaserCollision();
 	
 	 //die-down of roll and pitch
 	 if (pitch < 0)
@@ -932,7 +977,7 @@ void update(int i) {
 		 else if (i == 227)
 		 {
 	
-			 if (armDeathStar) 
+			 if (armDeathStar && !deathStarDestroyed) 
 			 {
 				
 				 unumTrans = shape[1]->getModelMatrix(1);
@@ -955,7 +1000,7 @@ void update(int i) {
 				 }
 			 }
 			 shape[i]->update(currentTime, timeOfLastLaser, unumTrans, warBTrans, unumToWB, unumHoleLocation);
-			 if (timeOfLastLaser < currentTime - 500) armDeathStar = true;
+			 if (timeOfLastLaser < currentTime - 500 && healthValue > 0) armDeathStar = true;
 		 }
 		 else shape[i]->update(i, planetGravity, eye, at, up, missilesFired, healthValue, thrust);
 	 }
@@ -1005,6 +1050,11 @@ void keyboard(unsigned char key, int x, int y) {
 		if (trackShip!=9) trackShip++;
 		else trackShip = 1;
 		break;
+
+	case 'i': case 'I':  // invincable mode
+		invincableMode = !invincableMode;
+		break;
+
 	case '1':   // follow ship view
 		trackShip = 1;
 		 break;

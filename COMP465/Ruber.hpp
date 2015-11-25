@@ -541,6 +541,12 @@ public:
 						glm::vec3(0.0f, 0.0, 10000.0f));
 				}
 			}
+			else
+			{
+				//return to hidden location outside of frustrum 
+				translationMatrix = glm::translate(glm::mat4(),
+					glm::vec3(0.0f, 0.0, 10000.0f));
+			}
 		}
 		if (i == 7) // missile site for unum
 		{
