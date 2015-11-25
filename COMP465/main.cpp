@@ -24,6 +24,7 @@ Megan Kim
 // Shapes
 const int nAsteroids = 200;
 const int nNonAstObj = 8; // number of non-asteroid objects
+const int numSphere = 5; //number of planets and moons
 const int numOBJ = 24; // number of OBJ meshes
 const int nModels = nNonAstObj + nAsteroids + numOBJ;
 
@@ -139,6 +140,18 @@ const GLuint nVertices[] =
 	nFacetsAsteroid4 * 3,
 	nFacetsAsteroid5 * 3
 	
+};
+
+float radius[nNonAstObj] =
+{
+	200.0f, //ruber
+	20.0f, //unum
+	40.0f, //duo
+	10.0f, //primus
+	15.0f, //secundus
+	10.0f, //warbird
+	25.0f, //missile
+	3.0f //missile site
 };
 
 // vectors for "model"
@@ -313,7 +326,10 @@ void init(void) {
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	printf("number of models = %i", nModels);
 	// create shape
-	for (int i = 0; i < nModels; i++) shape[i] = new ruber(i, nAsteroids);
+	for (int i = 0; i < nModels; i++) {
+		shape[i] = new ruber(i, nAsteroids);
+		//shape[i]->setSize(radius[i], boundingRadius[i]);
+	}
 	mesh = new Mesh("./sphere.obj", vao, buffer, nModels-numOBJ,0, false);
 	shader = new Shader("./basicShader");
 	texture = new Texture("./ruberText2.jpg");
@@ -388,6 +404,29 @@ void drawString(void * font, char *s) {
 
 	for (i = 0; i < strlen(s); i++)
 		glutBitmapCharacter(font, (int) s[i]);
+}
+
+bool checkForCollision = true;
+void checkCollision() {
+	float objDistance; //used to find distance between objects
+	
+	glm::vec3 objPos = getPosition(shape[2]->getOrientationMatrix()); //finding pos of warbird
+	if (shape[2] && checkForCollision) {
+		for (int i = 0; i < nNonAstObj; i++) { //checking for collision on all planets and moons
+			if (i != 2) {
+				objDistance = distance(objPos, getPosition(shape[i]->getOrientationMatrix()));
+				if (objDistance < (radius[i] + radius[5] + 100)) {
+					checkForCollision = false;
+					//showVec3("ship", objPos);
+					//showVec3("other", getPosition(shape[i]->getOrientationMatrix()));
+					//printf(" %f", objDistance);
+					printf("You Died");
+					healthValue = 0.0f;
+				}
+			}
+		}
+		//for (int i = 0; i < ) //checking for all missiles/laser
+	}
 }
 
 void updateTitle() {
@@ -759,7 +798,7 @@ void update(int i) {
 	warBTrans = shape[2]->getModelMatrix(2);
 	duoTrans = shape[3]->getTranslationMatrix(3);
 	
-	
+	checkCollision();
 	
 	 //die-down of roll and pitch
 	 if (pitch < 0)

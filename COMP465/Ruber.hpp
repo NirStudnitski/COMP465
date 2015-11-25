@@ -12,6 +12,7 @@ private:
 	glm::mat4 rotationMatrix;
 	glm::mat4 scaleMatrix;
 	glm::mat4 translationMatrix;
+	glm::mat4 orientationMatrix;
 	glm::vec3 rotationAxis;
 	glm::vec3 rotationAxisPitch;
 	glm::vec3 rotationAxisRoll;
@@ -227,6 +228,15 @@ public:
 		
 	}
 	
+	void setSize(float modelSize, float modelBoundingRad) {
+		scaleMatrix = glm::scale(glm::mat4(), glm::vec3(modelSize * 1.0f / modelBoundingRad));
+	}
+
+	glm::mat4 getOrientationMatrix() {
+		//return orientationMatrix;
+		if (orbit) return(rotationMatrix * translationMatrix * scaleMatrix);
+		else return(translationMatrix * rotationMatrix * scaleMatrix);
+	}
 
 	glm::mat4 getModelMatrix(int i) {
 
