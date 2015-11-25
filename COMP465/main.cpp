@@ -174,7 +174,7 @@ int Index = 0;  // global variable indexing into VBO arrays
 				// display state and "state strings" for title display
 				// window title strings
 char baseStr[100] = "Warbird: Nir and Megan! ";
-char fpsStr[15], upsStr[15], viewStr[15];
+char fpsStr[15], upsStr[15], viewStr[30];
 char titleStr[100];
 
 char warp = 'z';
@@ -427,7 +427,6 @@ void checkCollision() {
 				}
 			}
 		}
-		//for (int i = 0; i < ) //checking for all missiles/laser
 	}
 }
 
@@ -885,7 +884,7 @@ void update(int i) {
 			 upTemp = eye - at;
 			 right = glm::cross(upTemp, up);
 			 up = glm::normalize(glm::cross(right, upTemp));
-			// strcpy(viewStr, " Ship View");
+			 strcpy(viewStr, " Ship View");
 			 viewMatrix = glm::lookAt(eye, at, up);
 
 
@@ -898,7 +897,7 @@ void update(int i) {
 		 eye = glm::vec3(behindShipView[3][0] + behindShipView[2][0] * 10, behindShipView[3][1] + behindShipView[2][1] * 10, behindShipView[3][2] + behindShipView[2][2] * 10);
 		 at = glm::vec3(behindShipView[3][0], behindShipView[3][1], behindShipView[3][2]);
 		 up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
-		 //strcpy(viewStr, " Behind Ship View");
+		 strcpy(viewStr, " Behind Ship View");
 		 viewMatrix = glm::lookAt(eye, at, up);
 	 break;
 	case 3: //cokpit view
@@ -910,7 +909,7 @@ void update(int i) {
 		eye = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 3* correction, behindShipView[3][1] - behindShipView[2][1] * 3 * correction, behindShipView[3][2] - behindShipView[2][2] * 3 * correction);
 		at = glm::vec3(behindShipView[3][0] - behindShipView[2][0] * 4 * correction, behindShipView[3][1] - behindShipView[2][1] * 4 * correction, behindShipView[3][2] - behindShipView[2][2] * 4 * correction);
 		up = glm::vec3(behindShipView[1][0], behindShipView[1][1], behindShipView[1][2]);
-		//strcpy(viewStr, " Cockpit View");
+		strcpy(viewStr, " Cockpit View");
 		viewMatrix = glm::lookAt(eye, at, up);
 	 break;
 
@@ -919,7 +918,7 @@ void update(int i) {
 		eye = glm::vec3(behindShipView[3].x, behindShipView[3].y + 400.0f, behindShipView[3].z);
 		at = glm::vec3(behindShipView[3].x, 0.0f, behindShipView[3].z);
 		up = glm::vec3(0.0f, 0.0f, -1.0f);
-		//strcpy(viewStr, " Unum View");
+		strcpy(viewStr, " Unum View");
 		viewMatrix = glm::lookAt(eye, at, up);
 		break;
 
@@ -938,7 +937,7 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
 		up = -glm::normalize(glm::cross((glm::vec3(1.0f, 0.0f, 0.0f)), eye));  
 		viewMatrix = glm::lookAt(eye, at, up);
-	//	strcpy(viewStr, " Initial view");
+		strcpy(viewStr, " Initial view");
 		break;
 
 	case 7:
@@ -946,7 +945,7 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);  
 		up = -glm::normalize(glm::cross((glm::vec3(1.0f, 0.0f, 0.0f)), eye));
 		viewMatrix = glm::lookAt(eye, at, up);
-	//	strcpy(viewStr, " Front view");
+		strcpy(viewStr, " Front view");
 		break;
 
 	case 8:
@@ -954,14 +953,14 @@ void update(int i) {
 		at = glm::vec3(0.0f, 0.0f, 0.0f);   
 		up = -glm::normalize(glm::cross((glm::vec3(0.0f, 0.0f, -1.0f)), eye));
 		viewMatrix = glm::lookAt(eye, at, up);
-	//	strcpy(viewStr, " Right view");
+		strcpy(viewStr, " Right view");
 		break;
 
 	case 9:
 		eye = glm::vec3(0.0f, 3000.0f, 0.0f);  
 		at = glm::vec3(0.0f, 0.0f, 0.0f);     
 		up = glm::vec3(0.0f, 0.0f, -1.0f);   
-	//	strcpy(viewStr, " Top view");
+		strcpy(viewStr, " Top view");
 		viewMatrix = glm::lookAt(eye, at, up);
 		break;
 	}
